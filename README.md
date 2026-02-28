@@ -29,8 +29,8 @@ This project is built with **React** and is fully responsive.
 
 ## Screenshots
 
-![Dashboard](./screenshots/dashboard.png)  
-![Investment login](./screenshots/login.png)  
+![Dashboard](./screenshots/Dashboard.png)  
+![Investment login](./screenshots/Login.png)  
 
 ---
 
