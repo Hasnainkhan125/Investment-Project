@@ -1,7 +1,50 @@
-# React Admin Dashboard
+# Investment Project 💰
 
-Build a COMPLETE React Admin Dashboard App | React, Material UI, Data Grid, Light & Dark Mode
+[Live Demo][https://your-live-demo-link.com](https://investtoday.netlify.app/) 🚀
 
-Video: https://www.youtube.com/watch?v=wYpCWwD1oz0
+---
 
-For all related questions and discussions about this project, check out the discord: https://discord.gg/2FfPeEk2mX
+## Overview
+
+**Investment Project** is a simple and secure platform where users can:
+
+- Deposit funds easily
+- Withdraw funds quickly
+- Track daily profits from investment plans
+- View detailed investment plan statistics
+
+This project is built with **React** and is fully responsive.
+
+---
+
+## Features
+
+✅ User-friendly dashboard  
+✅ Multiple investment plans with daily profit display  
+✅ Deposit and withdraw functionality  
+✅ Secure handling of transactions  
+✅ Interactive UI for tracking profits and balances  
+
+---
+
+## Screenshots
+
+![Dashboard](./screenshots/dashboard.png)  
+![Investment login](./screenshots/login.png)  
+
+---
+
+## Tech Stack
+
+- **Frontend:** React, JavaScript, CSS  
+- **Backend:** (If you have one, e.g., Node.js/Express)  
+- **Database:** (If applicable, e.g., MongoDB, Firebase)  
+
+---
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/Hasnainkhan125/Investment-Project.git
