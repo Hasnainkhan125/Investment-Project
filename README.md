@@ -1,4 +1,4 @@
-# Investment 💰
+# Investment Project 💰
 
 [Live Demo][https://your-live-demo-link.com](https://investtoday.netlify.app/) 🚀
 
@@ -30,7 +30,6 @@ This project is built with **React** and is fully responsive.
 ## Screenshots
 
 ![Dashboard](./screenshots/dashboard.png)  
-![Investment login](./screenshots/login.png)  
 
 ---
 
