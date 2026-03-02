@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -9,58 +8,59 @@ import {
   Grid,
   IconButton,
   Snackbar,
+  Dialog,
+  Fade,
+  Paper,
+  Slide,
   Alert,
   CircularProgress,
   Tooltip,
-  Fade,
-  InputAdornment,
-  Paper,
-  Slide,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom"; // <-- import this at top
 
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import PersonIcon from "@mui/icons-material/Person";
-import EmailIcon from "@mui/icons-material/Email";
-import PhoneIcon from "@mui/icons-material/Phone";
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import LockIcon from "@mui/icons-material/Lock";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import { supabase } from "../../supabaseClient";
 
 function SlideTransition(props) {
-  return <Slide {...props} direction="down" />;
+  return <Slide {...props} direction="top" />;
 }
+
 
 const Profile = ({ darkMode }) => {
   const isDark = darkMode;
-
   const storedData = JSON.parse(localStorage.getItem("profileData")) || {};
+  const navigate = useNavigate(); // <-- add this
 
+  const [activePage, setActivePage] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: storedData.phone || "",
-    easypaisaNumber: storedData.easypaisaNumber || "",
-    easypaisaHolder: storedData.easypaisaHolder || "",
-    jazzcashNumber: storedData.jazzcashNumber || "",
-    jazzcashHolder: storedData.jazzcashHolder || "",
   });
-
   const [profilePic, setProfilePic] = useState(
     storedData.dp || "https://i.pravatar.cc/300"
   );
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [hover, setHover] = useState(false);
-  const [copiedField, setCopiedField] = useState("");
 
-  // ✅ AUTO DETECT SUPABASE USER
+  // Fetch Supabase user
   useEffect(() => {
     const getUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
       if (session?.user) {
         setFormData((prev) => ({
@@ -70,7 +70,6 @@ const Profile = ({ darkMode }) => {
         }));
       }
     };
-
     getUser();
   }, []);
 
@@ -90,75 +89,17 @@ const Profile = ({ darkMode }) => {
 
   const handleSave = () => {
     setLoading(true);
-
     setTimeout(() => {
       const dataToSave = { ...formData, dp: profilePic };
       localStorage.setItem("profileData", JSON.stringify(dataToSave));
-
       setLoading(false);
       setSnackbarMessage("Profile Updated Successfully!");
       setOpenSnackbar(true);
     }, 1000);
   };
 
-  const handleCopy = (text, label) => {
-    if (!text) return;
-    navigator.clipboard.writeText(text);
-    setCopiedField(label);
-    setSnackbarMessage(`${label} copied successfully!`);
-    setOpenSnackbar(true);
-    setTimeout(() => setCopiedField(""), 2000);
-  };
-
   const textColor = isDark ? "#fff" : "#111";
-  const secondaryText = isDark ? "#94a3b8" : "#7d7c7c";
-  
 
-const modernInput = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: 10, // modern rounded corners
-    background: isDark ? "rgba(255,255,255,0.05)" : "#f5f5f5", // soft bg
-    minHeight: 44, // slightly taller for better click area
-    fontSize: 14,
-    padding: "0 12px", // horizontal padding only
-    "& fieldset": {
-      borderColor: isDark ? "rgba(255,255,255,0.2)" : "#ccc", // subtle border
-      borderWidth: 1.2, // thicker for better visibility
-    },
-    "&:hover fieldset": {
-      borderColor: "#ff9705", // accent on hover
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#ff9705", // accent on focus
-      boxShadow: isDark
-        ? "0 0 6px rgba(255,151,5,0.25)"
-        : "0 0 6px rgba(255,151,5,0.25)", // soft glow
-    },
-  },
-  "& .MuiInputLabel-root": {
-    color: isDark ? "#94a3b8" : "#74727a",
-    fontSize: 13,
-    fontWeight: 500,
-    "&.Mui-focused": {
-      color: "#ff9705", // highlight label on focus
-      transform: "translate(12px, -6px) scale(0.85)", // smooth float
-    },
-  },
-  "& .MuiInputBase-input": {
-    color: isDark ? "#f5f5f5" : "#111111",
-    padding: "14px 0 6px", // top padding to avoid label overlap
-    fontSize: 14,
-    lineHeight: 1.4,
-  },
-  "& .MuiOutlinedInput-notchedOutline": {
-    borderRadius: 10, // keep consistent with root
-  },
-  "& .MuiInputBase-input::placeholder": {
-    color: isDark ? "#cbd5e1" : "#999999",
-    opacity: 1,
-  },
-  transition: "all 0.3s ease", // smooth animations
-};
   return (
     <Box
       sx={{
@@ -168,6 +109,7 @@ const modernInput = {
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
+        py: 4,
       }}
     >
       <Paper
@@ -176,51 +118,53 @@ const modernInput = {
           width: "100%",
           maxWidth: 500,
           borderRadius: 4,
-          background: 'none',
+          background: "none",
           p: 1,
           backdropFilter: "blur(20px)",
           color: textColor,
           position: "relative",
         }}
       >
-        {/* Header */}
-        <Box textAlign="center" mb={3}>
-          <Typography
-            variant="h2"
-            fontWeight={'bold'}
+        {/* HEADER */}
+        <Box
+          sx={{
+            position: "relative",
+            borderRadius: 4,
+            p: 4,
+            mb: 4,
+            textAlign: "center",
+                  background: "linear-gradient(90deg, #309cea, #309cea)",
+            color: "#fff",
+            overflow: "hidden",
+          }}
+        >
+          <Box
             sx={{
-              background: isDark
-                ? "linear-gradient(90deg, #ff9705, #ff9705)"
-                : "linear-gradient(90deg, #ff9705, #ff9705)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              position: "absolute",
+              top: -40,
+              right: -40,
+              width: 150,
+              height: 150,
+              background: "rgba(255,255,255,0.15)",
+              borderRadius: "50%",
+              filter: "blur(40px)",
             }}
-          >
-            Edit Profile
-          </Typography>
-          <Typography variant="body2" sx={{ color: secondaryText, mt: 0.5 }}>
-            Manage your personal information securely
-          </Typography>
-        </Box>
+          />
 
-        {/* Avatar */}
-        <Box textAlign="center" mb={3}>
           <Box
             position="relative"
             display="inline-block"
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
+            sx={{ mb: 2 }}
           >
             <Avatar
               src={profilePic}
               sx={{
-                width: 100,
-                height: 100,
-                borderRadius: "50%",
-                border: "2px solid transparent",
-                background: isDark
-                  ? "linear-gradient(135deg, #f8b538, #f8b538)"
-                  : "linear-gradient(135deg, #f8b538, #f8b538)",
+                width: 110,
+                height: 110,
+                border: "2px solid #ffffff2e",
+                backdropFilter: "blur(10px)",
               }}
             />
             <Fade in={hover}>
@@ -229,18 +173,14 @@ const modernInput = {
                   position: "absolute",
                   inset: 0,
                   borderRadius: "50%",
-                  background: isDark ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.6)",
+                  background: "rgba(0,0,0,0.5)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  backdropFilter: "blur(4px)",
                 }}
               >
                 <Tooltip title="Change Picture">
-                  <IconButton
-                    component="label"
-                    sx={{ color: isDark ? "#38bdf8" : "#2563eb" }}
-                  >
+                  <IconButton component="label" sx={{ color: "#fff" }}>
                     <PhotoCameraIcon />
                     <input
                       type="file"
@@ -253,223 +193,99 @@ const modernInput = {
               </Box>
             </Fade>
           </Box>
+
+          <Typography
+            variant="h3"
+            fontWeight={700}
+            sx={{ mt: 1, fontFamily: "Poppins, sans-serif" }}
+          >
+            {formData.name || "User Name"}
+          </Typography>
+
+          <Typography variant="body2" sx={{ opacity: 0.85, fontSize: 13 }}>
+            {formData.email || "user@email.com"}
+          </Typography>
         </Box>
 
-        {/* Form */}
-        <Grid container spacing={2}>
-<Grid item xs={12}>
-  <Tooltip title="Registered Name" arrow placement="top">
-    <Box>
-      <TextField
-        fullWidth
-        label="Full Name"
-        name="name"
-        value={formData.name}
-        size="small"
-        sx={{
-          ...modernInput,
-          "& .MuiOutlinedInput-root": {
-            ...modernInput["& .MuiOutlinedInput-root"],
-            background: isDark
-              ? "rgba(255, 255, 255, 0.05)" // dark mode subtle blur
-              : "rgba(255, 255, 255, 0.4)", // light mode frosted
-            backdropFilter: "blur(6px)",
-            cursor: "not-allowed",
-          },
-          "& .MuiInputBase-input": {
-            ...modernInput["& .MuiInputBase-input"],
-            color: isDark ? "#f5f5f5" : "#555", // softer text
-            cursor: "not-allowed",
-          },
-          "& .MuiInputLabel-root": {
-            ...modernInput["& .MuiInputLabel-root"],
-            color: isDark ? "#94a3b8" : "#666", // softer label
-          },
-        }}
-        InputProps={{
-          readOnly: true,
-          startAdornment: (
-            <InputAdornment position="start">
-              <PersonIcon sx={{ color: isDark ? "#f8b538" : "#2563eb" }} />
-            </InputAdornment>
-          ),
-        }}
-      />
-    </Box>
-  </Tooltip>
-</Grid>
-
-<Grid item xs={12}>
-  <Tooltip title="Registered Email" arrow placement="top">
-    <Box>
-      <TextField
-        fullWidth
-        label="Email Address"
-        name="email"
-        value={formData.email}
-        size="small"
-        sx={{
-          ...modernInput,
-          "& .MuiOutlinedInput-root": {
-            ...modernInput["& .MuiOutlinedInput-root"],
-            background: isDark
-              ? "rgba(255, 255, 255, 0.05)" // dark mode subtle blur
-              : "rgba(255, 255, 255, 0.4)", // light mode frosted
-            backdropFilter: "blur(6px)",
-            cursor: "not-allowed",
-          },
-          "& .MuiInputBase-input": {
-            ...modernInput["& .MuiInputBase-input"],
-            color: isDark ? "#f5f5f5" : "#555", // softer text for read-only
-            cursor: "not-allowed",
-          },
-          "& .MuiInputLabel-root": {
-            ...modernInput["& .MuiInputLabel-root"],
-            color: isDark ? "#94a3b8" : "#666", // softer label
-          },
-        }}
-        InputProps={{
-          readOnly: true,
-          startAdornment: (
-            <InputAdornment position="start">
-              <EmailIcon sx={{ color: isDark ? "#38bdf8" : "#2563eb" }} />
-            </InputAdornment>
-          ),
-        }}
-      />
-    </Box>
-  </Tooltip>
-</Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Phone Number"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              sx={modernInput}
-              size="small"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <PhoneIcon sx={{ color: isDark ? "#38bdf8" : "#2563eb" }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-          </Grid>
-
-          {/* EasyPaisa */}
-          <Grid item xs={12}>
-            <Typography variant="subtitle2" color={isDark ? "#22c55e" : "#16a34a"}>
-              EasyPaisa
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Number"
-              name="easypaisaNumber"
-              value={formData.easypaisaNumber}
-              onChange={handleChange}
-              sx={modernInput}
-              size="small"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <AccountBalanceWalletIcon sx={{ color: isDark ? "#22c55e" : "#16a34a" }} />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() =>
-                        handleCopy(formData.easypaisaNumber, "EasyPaisa")
-                      }
-                      disabled={!formData.easypaisaNumber}
-                      sx={{ color: isDark ? "#22c55e" : "#16a34a" }}
-                      size="small"
-                    >
-                      {copiedField === "EasyPaisa" ? (
-                        <CheckCircleIcon />
-                      ) : (
-                        <ContentCopyIcon />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Account Holder"
-              name="easypaisaHolder"
-              value={formData.easypaisaHolder}
-              onChange={handleChange}
-              sx={modernInput}
-              size="small"
-            />
-          </Grid>
-
-          {/* JazzCash */}
-          <Grid item xs={12}>
-            <Typography variant="subtitle2" color={isDark ? "#f97316" : "#ea580c"}>
-              JazzCash
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Number"
-              name="jazzcashNumber"
-              value={formData.jazzcashNumber}
-              onChange={handleChange}
-              sx={modernInput}
-              size="small"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <AccountBalanceWalletIcon sx={{ color: isDark ? "#f97316" : "#ea580c" }} />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() =>
-                        handleCopy(formData.jazzcashNumber, "JazzCash")
-                      }
-                      disabled={!formData.jazzcashNumber}
-                      sx={{ color: isDark ? "#f97316" : "#ea580c" }}
-                      size="small"
-                    >
-                      {copiedField === "JazzCash" ? (
-                        <CheckCircleIcon />
-                      ) : (
-                        <ContentCopyIcon />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Account Holder"
-              name="jazzcashHolder"
-              value={formData.jazzcashHolder}
-              onChange={handleChange}
-              sx={modernInput}
-              size="small"
-            />
-          </Grid>
+        {/* COLORED STATS CARDS */}
+        <Grid container spacing={2} mb={3}>
+          {[
+            { label: "Wallet Balance", value: 0, color: "linear-gradient(135deg,#3b82f6,#2563eb)" },
+            { label: "Total Commission", value: 0, color: "linear-gradient(135deg,#10b981,#059669)" },
+            { label: "Total Deposit", value: 0, color: "linear-gradient(135deg,#f59e0b,#ea580c)" },
+            { label: "Total Withdraw", value: 0, color: "linear-gradient(135deg,#ef4444,#dc2626)" },
+          ].map((item, index) => (
+            <Grid item xs={6} key={index}>
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 2.5,
+                  borderRadius: 3,
+                  textAlign: "center",
+                  background: item.color,
+                  color: "#fff",
+                  transition: "all 0.3s ease",
+                  boxShadow: "0 4px 15px rgba(0,0,0,0.15)",
+                }}
+              >
+                <Typography fontSize={20} fontWeight={700}>
+                  {item.value}
+                </Typography>
+                <Typography fontSize={12} sx={{ opacity: 0.9 }}>
+                  {item.label}
+                </Typography>
+              </Paper>
+            </Grid>
+          ))}
         </Grid>
+
+<Paper elevation={1} sx={{ mt: 3, borderRadius: 3, overflow: "hidden" }}>
+  {[
+    { label: "Change Password", key: "password", icon: <LockIcon /> },
+    { label: "Deposit Record", key: "deposit", icon: <ReceiptLongIcon /> },
+    { label: "Withdraw Record", key: "withdraw", icon: <ReceiptLongIcon /> },
+    { label: "Help & FAQ", key: "faq", icon: <HelpOutlineIcon /> },
+  ].map((item, index) => (
+    <Box
+      key={index}
+      onClick={() => {
+        switch (item.key) {
+          case "password":
+            setActivePage("password");
+            break;
+          case "deposit":
+            navigate("/user-dashboard/deposit-history"); // ✅ full nested path
+            break;
+          case "withdraw":
+            navigate("/user-dashboard/withdraw-history"); // ✅ full nested path
+            break;
+          case "faq":
+            navigate("/user-dashboard/faq"); // ✅ full nested path
+            break;
+          default:
+            break;
+        }
+      }}
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        p: 2,
+        cursor: "pointer",
+        backgroundColor: "#fff",
+        "&:hover": { backgroundColor: "#f9fafb" },
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        <Box sx={{ color: "#0088f8" }}>{item.icon}</Box>
+        <Typography fontSize={14} color="#111">
+          {item.label}
+        </Typography>
+      </Box>
+      <ArrowForwardIosIcon sx={{ fontSize: 14, color: "#999" }} />
+    </Box>
+  ))}
+</Paper>
 
         {/* Save Button */}
         <Box mt={3} textAlign="center">
@@ -478,28 +294,229 @@ const modernInput = {
             onClick={handleSave}
             disabled={loading}
             fullWidth
-        sx={{
-      background: "linear-gradient(90deg, #f59e0b, #ea580c)",
-      color: "#fff",
-      borderRadius: 2,
-      textTransform: "none",
-      px: { xs: 6, sm: 8 },
-      py: 1.5,
-      fontSize: 16,
-      fontWeight: 600,
-      transition: "all 0.3s ease",
-      "&:hover": {
-        background: "linear-gradient(90deg, #ea580c, #f59e0b)",
-        transform: "translateY(-3px) scale(1.05)",
-      },
-    }}
+            sx={{
+                  background: "linear-gradient(90deg, #309cea, #309cea)",
+              color: "#fff",
+              borderRadius: 2,
+              textTransform: "none",
+              px: { xs: 6, sm: 8 },
+              py: 1.5,
+              fontSize: 16,
+              fontWeight: 600,
+              transition: "all 0.3s ease",
+              "&:hover": {
+                  background: "linear-gradient(90deg, #2f88c8, #6fbcf4)",
+                transform: "translateY(-3px) scale(1.05)",
+              },
+            }}
           >
             {loading ? <CircularProgress size={20} color="inherit" /> : "Save"}
           </Button>
         </Box>
-      </Paper>
 
-      {/* Small Full-width Snackbar */}
+        {/* Snackbar */}
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={2500}
+          onClose={() => setOpenSnackbar(false)}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          TransitionComponent={SlideTransition}
+        >
+          <Alert
+            onClose={() => setOpenSnackbar(false)}
+            icon={<CheckCircleIcon />}
+            severity="success"
+            variant="filled"
+            sx={{
+              width: "90vw",
+              maxWidth: 300,
+              borderRadius: 12,
+              fontWeight: 500,
+              fontSize: 13,
+              px: 2,
+              py: 1.5,
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              backdropFilter: "blur(12px)",
+              backgroundColor: isDark ? "#edecec" : "#f0f0f0",
+            }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+
+{/* ===== MODERN ADVANCED PASSWORD DIALOG ===== */}
+<Dialog
+  open={activePage === "password"}
+  onClose={() => setActivePage(null)}
+  fullWidth
+  maxWidth="xs"
+  PaperProps={{
+    sx: {
+      borderRadius: { xs: 3, sm: 4 },
+      p: { xs: 3, sm: 4 },
+      background: isDark ? "rgba(25,25,25,0.95)" : "rgba(255,255,255,0.95)",
+      backdropFilter: "blur(20px)",
+      boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
+      border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.08)",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      position: "relative",
+    },
+  }}
+  BackdropProps={{
+    sx: {
+      backgroundColor: "rgba(0, 0, 0, 0.69)",
+    },
+  }}
+>
+  <Fade in={activePage === "password"} timeout={400}>
+    <Box sx={{ width: "100%" }}>
+      {/* Title */}
+      <Typography
+        variant="h5"
+        fontWeight={700}
+        textAlign="center"
+        color={isDark ? "#fff" : "#111"}
+        mb={1}
+        sx={{ fontFamily: "Poppins, sans-serif", fontSize: { xs: 20, sm: 24 } }}
+      >
+        Update Password
+      </Typography>
+
+         <Typography  textAlign={'center'} variant="body2" sx={{  textDecoration: 'underline', cursor: 'pointer',  fontSize: 15 , color: isDark ? "#aaa" : "#666", mb: 2 }}>
+            {formData.email || "user@email.com"}
+          </Typography>
+
+      {/* Modern Input */}
+      <TextField
+        fullWidth
+        type={showPassword ? "text" : "password"}
+        label="New Password"
+        value={newPassword}
+        onChange={(e) => setNewPassword(e.target.value)}
+        placeholder="Enter password"
+        size="medium"
+        sx={{
+          mb: 3,
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 3,
+            background: isDark ? "rgba(255,255,255,0.05)" : "#f5f5f5",
+            "& fieldset": { borderColor: isDark ? "rgba(255,255,255,0.2)" : "#ccc" },
+            "&:hover fieldset": { borderColor: "#3b82f6" },
+            "&.Mui-focused fieldset": {
+              borderColor: "#3b82f6",
+              boxShadow: "0 0 12px rgba(59,130,246,0.3)",
+            },
+          },
+          "& .MuiInputLabel-root": {
+            color: isDark ? "#aaa" : "#666",
+            fontWeight: 500,
+            "&.Mui-focused": { color: "#3b82f6" },
+          },
+          "& .MuiInputBase-input": {
+            color: isDark ? "#fff" : "#111",
+            padding: "14px 12px",
+            fontSize: { xs: 14, sm: 15 },
+          },
+        }}
+        InputProps={{
+          endAdornment: (
+<IconButton
+  onClick={(e) => {
+    e.stopPropagation(); // prevent dialog close
+    setShowPassword((prev) => !prev);
+  }}
+  edge="end"
+  sx={{
+    background: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)",
+    color: isDark ? "#fff" : "#111",
+    borderRadius: 1.5,
+    p: 1,
+    transition: "all 0.3s ease",
+    "&:hover": {
+      background: isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)",
+      transform: "scale(1.1)",
+      color: "#3b82f6",
+    },
+  }}
+>
+  {showPassword ? <Visibility fontSize="small" /> : <VisibilityOff fontSize="small" />}
+</IconButton>
+          ),
+        }}
+      />
+
+      {/* Buttons */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 2,
+        }}
+      >
+        {/* Cancel */}
+        <Button
+          fullWidth
+          variant="outlined"
+          onClick={() => setActivePage(null)}
+          sx={{
+            borderRadius: 3,
+            textTransform: "none",
+            borderColor: isDark ? "rgba(255,255,255,0.3)" : "#ccc",
+            color: isDark ? "#fff" : "#111",
+            py: { xs: 1.5, sm: 1.8 },
+            fontSize: { xs: 14, sm: 15 },
+            "&:hover": {
+              borderColor: "#3b82f6",
+              background: isDark ? "rgba(255,255,255,0.05)" : "#f0f0f0",
+              
+            },
+          }}
+        >
+          Cancel
+        </Button>
+
+        {/* Update */}
+        <Button
+          fullWidth
+          variant="contained"
+          onClick={async () => {
+            if (!newPassword) return;
+            setLoading(true);
+            const { error } = await supabase.auth.updateUser({ password: newPassword });
+            setLoading(false);
+            if (!error) {
+              setSnackbarMessage("Password Updated Successfully!");
+              setOpenSnackbar(true);
+              setNewPassword("");
+              setActivePage(null);
+            }
+          }}
+          sx={{
+            borderRadius: 3,
+            textTransform: "none",
+            background: "linear-gradient(135deg, #3b82f6, #2563eb)",
+            py: { xs: 1.5, sm: 1.8 },
+            fontSize: { xs: 14, sm: 15 },
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            "&:hover": {
+              background: "linear-gradient(135deg, #2563eb, #215bd8)",
+              transform: "translateY(-2px) scale(1.02)",
+            },
+            transition: "all 0.3s ease",
+          }}
+        >
+          {loading ? <CircularProgress size={20} color="inherit" /> : "Update"}
+        </Button>
+      </Box>
+
+      {/* Snackbar inside Dialog */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={2500}
@@ -513,7 +530,7 @@ const modernInput = {
           severity="success"
           variant="filled"
           sx={{
-            width: "90vw",
+            width: "90%",
             maxWidth: 300,
             borderRadius: 12,
             fontWeight: 500,
@@ -524,19 +541,19 @@ const modernInput = {
             alignItems: "center",
             gap: 1,
             backdropFilter: "blur(12px)",
-            backgroundColor: isDark ? "#edecec" : "#f0f0f0",
+            backgroundColor: isDark ? "#333" : "#fff",
+            color: isDark ? "#fff" : "#111",
           }}
         >
           {snackbarMessage}
         </Alert>
       </Snackbar>
     </Box>
+  </Fade>
+</Dialog>
+      </Paper>
+    </Box>
   );
 };
 
 export default Profile;
-
-
-
-
-

@@ -1,111 +1,162 @@
-import { useEffect } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
-import { CssBaseline, ThemeProvider } from "@mui/material";
+import { CssBaseline, ThemeProvider, CircularProgress, Box } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import ProtectedRoute from "./ProtectedRoute.jsx";
-
-// 🔹 Import Supabase client
 import { supabase } from "./supabaseClient.js";
-
-// 🔹 USER DASHBOARD LAYOUT
+import DepositHistory from "../src/scenes/user/deposithistory.jsx"; // the component we just made
+import WithdrawHistory from "./scenes/user/withdrawhistory.jsx"; // Withdraw
+import Support from "./scenes/user/support.jsx";
+// 🔹 Layout
 import UserLayout from "./scenes/user/UserLayout";
 
-// 🔹 USER DASHBOARD PAGES
-import DashboardHome from "./scenes/user/DashboardHome";
+// 🔹 User Pages
 import Plan from "./scenes/user/plans.jsx";
 import Deposit from "./scenes/user/Deposit";
 import Withdraw from "./scenes/user/Withdraw";
 import Profile from "./scenes/user/profile";
 import Home from "./scenes/user/home.jsx";
+import Team from "./scenes/user/team.jsx";
 
 // 🔹 Auth
 import Login from "./scenes/login/Login";
 import Register from "./scenes/register/Register";
 import ChoosePanel from "./components/ChoosePanel";
 
+// 🔹 Lazy Load
+const FAQPage = lazy(() => import("./scenes/user/faq.jsx"));
+
 function App() {
   const [theme, colorMode] = useMode();
-  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const savedMode = localStorage.getItem("themeMode") || "dark";
-    document.body.dataset.theme = savedMode;
-  }, [theme]);
-
-  // Example: check Supabase session on app load
+  // ✅ Listen to Supabase session
   useEffect(() => {
     const getSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) console.log("Supabase session error:", error);
-      else console.log("Supabase session:", session);
+      const { data } = await supabase.auth.getSession();
+      setSession(data.session);
+      setLoading(false);
     };
+
     getSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
 
-        <Routes>
-          {/* DEFAULT ROUTE → LOGIN */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
-
-          {/* LOGIN WITH AUTO REDIRECT */}
-          <Route
-            path="/login"
-            element={
-              currentUser?.role ? (
-                currentUser.role === "admin" ? (
-                  <Navigate to="/admin/dashboard" replace />
-                ) : (
+        <Suspense
+          fallback={
+            <Box
+              sx={{
+                minHeight: "100vh",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          }
+        >
+          <Routes>
+            {/* Default */}
+            <Route
+              path="/"
+              element={
+                session ? (
                   <Navigate to="/user-dashboard" replace />
+                ) : (
+                  <Navigate to="/login" replace />
                 )
-              ) : (
-                <Login />
-              )
-            }
-          />
+              }
+            />
 
-          <Route path="/register" element={<Register />} />
-          <Route path="/choose-panel" element={<ChoosePanel />} />
+            {/* Auth */}
+            <Route
+              path="/login"
+              element={
+                session ? (
+                  <Navigate to="/user-dashboard" replace />
+                ) : (
+                  <Login />
+                )
+              }
+            />
 
-          <Route
-            path="/user-dashboard/*"
-            element={
-              <ProtectedRoute roles={["user", "admin"]}>
-                <UserLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Home />} />
-            <Route path="plan" element={<Plan />} />
-            <Route path="deposit" element={<Deposit />} />
-            <Route path="withdraw" element={<Withdraw />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="*" element={<Navigate to="/user-dashboard" replace />} />
-          </Route>
+            <Route path="/register" element={<Register />} />
+            <Route path="/choose-panel" element={<ChoosePanel />} />
 
-          {/* ================= ADMIN DASHBOARD ================= */}
-          <Route
-            path="/admin/*"
-            element={
-              <ProtectedRoute roles={["admin"]}>
-                <div className="app">
-                  <main className="content">
-                    <Outlet />
-                  </main>
-                </div>
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Navigate to="dashboard" replace />} />
-            <Route path="*" element={<Navigate to="/admin/dashboard" />} />
-          </Route>
+            {/* ================= USER DASHBOARD ================= */}
+            <Route
+              path="/user-dashboard/*"
+              element={
+                <ProtectedRoute>
+                  <UserLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Home />} />
+              <Route path="plan" element={<Plan />} />
+              <Route path="deposit" element={<Deposit />} />
+              <Route path="withdraw" element={<Withdraw />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="team" element={<Team />} />
+              
+              <Route path="faq" element={<FAQPage />} />
+  <Route path="deposit-history" element={<DepositHistory />} /> {/* relative path */}
+  <Route path="withdraw-history" element={<WithdrawHistory />} /> {/* relative path */}
+<Route path="support" element={<Support />} />
+              <Route path="*" element={<Navigate to="/user-dashboard" replace />} />
+            </Route>
 
-          {/* Catch All */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
+            {/* ================= ADMIN DASHBOARD ================= */}
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute>
+                  <div className="app">
+                    <main className="content">
+                      <Outlet />
+                    </main>
+                  </div>
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to="dashboard" replace />} />
+            </Route>
+
+            {/* Catch All */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
       </ThemeProvider>
     </ColorModeContext.Provider>
   );

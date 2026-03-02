@@ -47,54 +47,59 @@ const Register = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleRegister = async () => {
-    const { name, email, password } = formData;
+const handleRegister = async () => {
+  const { name, email, password } = formData;
 
-    if (!name || !email || !password) {
-      setErrorMessage("Please fill all fields");
+  if (!name || !email || !password) {
+    setErrorMessage("Please fill all fields");
+    setErrorSnackbar(true);
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const referralCode = generateReferralCode();
+
+    // ✅ Sign up with metadata (trigger will use this)
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name: name,
+          referral_code: referralCode,
+        },
+      },
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
       setErrorSnackbar(true);
       return;
     }
 
-    setLoading(true);
-
-    try {
-      // 🔹 Supabase sign-up
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name,
-            referral: generateReferralCode(),
-            role: "user", // default role
-          },
-        },
-      });
-
-      if (error) {
-        setErrorMessage(error.message);
-        setErrorSnackbar(true);
-        return;
-      }
-
-      // Registration successful
-      setSuccessSnackbar(true);
-
-      // Optional: save user data in localStorage
-      if (data.user) localStorage.setItem("authUser", JSON.stringify(data.user));
-
-      // Redirect to login after 1.5s
-      setTimeout(() => navigate("/login"), 1500);
-    } catch (err) {
-      console.error(err);
-      setErrorMessage(err.message || "Registration failed");
+    if (!data.user) {
+      setErrorMessage("User creation failed");
       setErrorSnackbar(true);
-    } finally {
-      setLoading(false);
+      return;
     }
-  };
 
+    // ✅ Success
+    setSuccessSnackbar(true);
+
+    setTimeout(() => {
+      navigate("/login");
+    }, 1500);
+
+  } catch (err) {
+    console.error(err);
+    setErrorMessage("Registration failed");
+    setErrorSnackbar(true);
+  } finally {
+    setLoading(false);
+  }
+};  
   return (
     <Box
       sx={{
@@ -113,14 +118,14 @@ const Register = () => {
           width: 100,
           height: 100,
           borderRadius: 4,
-          background: "linear-gradient(90deg, #f59e0b, #ea580c)",
+         background: "linear-gradient(90deg, #309cea, #309cea)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           mb: 3,
         }}
       >
-        <HiBolt size={50} color="#ffc800" />
+        <HiBolt size={50} color="#ffffff" />
       </Box>
 
       {/* Title */}
@@ -135,7 +140,7 @@ const Register = () => {
         Register{" "}
         <span
           style={{
-            background: "linear-gradient(90deg, #f59e0b, #ea580c)",
+            background: "linear-gradient(90deg, #309cea, #1f83cb)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
           }}
@@ -169,7 +174,7 @@ const Register = () => {
               flex: 1,
               textAlign: "center",
               py: 1.5,
-              background: "linear-gradient(90deg, #f59e0b, #ea580c)",
+                  background: "linear-gradient(90deg, #309cea, #309cea)",
               color: "#fff",
               borderRadius: 10,
               fontWeight: 600,
@@ -275,7 +280,7 @@ const Register = () => {
             borderRadius: 10,
             fontWeight: 700,
             fontSize: "15px",
-            background: "linear-gradient(90deg, #f59e0b, #ea580c)",
+                  background: "linear-gradient(90deg, #309cea, #309cea)",
             color: "#fff",
           }}
         >

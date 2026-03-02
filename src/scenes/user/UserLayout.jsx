@@ -17,6 +17,7 @@ const navLinks = [
   { name: "Plan", path: "plan" },
   { name: "Deposit", path: "deposit" },
   { name: "Withdraw", path: "withdraw" },
+  { name: "Team", path: "team" },
   { name: "Profile", path: "profile" },
 ];
 const Dashboard = () => {
@@ -131,8 +132,8 @@ const Dashboard = () => {
             style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}
             onClick={() => navigate("/user-dashboard")}
           >
-            <Zap size={30} color="#ff9d00" />
-            <span style={{ fontWeight: 700, fontSize: 20, color: "#ff9d00" }}>InvestPro</span>
+            <Zap size={30} color="#68a3ce" />
+            <span style={{ fontWeight: 700, textTransform: "uppercase",  fontSize: 20, color: "#2695e5" }}>Invest Pro</span>
           </div>
 
           {/* Desktop Nav */}
@@ -150,9 +151,9 @@ const Dashboard = () => {
                       gap: 8,
                       cursor: "pointer",
                       padding: "8px 14px",
-                      borderRadius: 12,
-                      background: active ? "rgba(255,157,0,0.15)" : "transparent",
-                      color: active ? "#ff9d00" : darkMode ? "#cbd5e1" : "#000000",
+                      borderRadius: 9,
+                      background: active ? "#309dea29" : "transparent",
+                      color: active ? "#309cea" : darkMode ? "#cbd5e1" : "#000000",
                       fontWeight: 600,
                     }}
                   >
@@ -163,7 +164,7 @@ const Dashboard = () => {
               })}
 
               <div onClick={() => setDarkMode(!darkMode)} style={{ cursor: "pointer" }}>
-                {darkMode ? <Sun size={20} color="#facc15" /> : <Moon size={20} />}
+                {darkMode ? <Sun size={20} color="#6fb9ee" /> : <Moon size={20} />}
               </div>
 
               <div ref={profileRef} style={{ position: "relative" }}>
@@ -176,11 +177,12 @@ const Dashboard = () => {
                       width: 40,
                       height: 40,
                       borderRadius: "50%",
-                      background: "linear-gradient(135deg, #ff9d00, #ff6a00)",
+                  background: "linear-gradient(90deg, #ffffff, #ffffff)",
+                  border: darkMode ? "2px solid rgba(9, 9, 9, 0.72)" : "2px solid rgba(0, 0, 0, 0.78))",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "#fff",
+                      color: "#000000",
                       fontWeight: 600,
                     }}
                   >
@@ -245,7 +247,7 @@ const Dashboard = () => {
           {isMobile && (
             <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
               <div onClick={() => setDarkMode(!darkMode)} style={{ cursor: "pointer" }}>
-                {darkMode ? <Sun size={20} color="#facc15" /> : <Moon size={20} />}
+                {darkMode ? <Sun size={20} color="#6fb9ee" /> : <Moon size={20} />}
               </div>
               <div ref={profileRef} style={{ position: "relative" }}>
                 <div
@@ -257,11 +259,12 @@ const Dashboard = () => {
                       width: 36,
                       height: 36,
                       borderRadius: "50%",
-                      background: "linear-gradient(135deg, #ff9d00, #ff6a00)",
+                 background: "linear-gradient(90deg, #ffffff, #ffffff)",
+                  border: darkMode ? "2px solid rgba(9, 9, 9, 0.72)" : "2px solid rgba(0, 0, 0, 0.78))",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "#fff",
+                      color: "#000000",
                       fontWeight: 600,
                     }}
                   >
@@ -286,7 +289,7 @@ const Dashboard = () => {
                   >
                     <div style={{ marginBottom: 10 }}>
                       <div style={{ fontWeight: 600 }}>{userName}</div>
-                      <div style={{ fontSize: 12, opacity: 0.7 }}>{userEmail}</div>
+                      <div style={{ fontSize: 11, opacity: 0.7 }}>{userEmail}</div>
                     </div>
                     <div
                       onClick={() => navigate("/user-dashboard/profile")}
@@ -339,7 +342,7 @@ const Dashboard = () => {
           position: "fixed",
           top: 0,
           right: mobileOpen ? 0 : "-100%",
-          width: 290,
+          width: 320,
           height: "100%",
           background: darkMode ? "#0f172a" : "#ffffff",
           zIndex: 350,
@@ -369,11 +372,12 @@ const Dashboard = () => {
                 width: 44,
                 height: 44,
                 borderRadius: "50%",
-                background: "linear-gradient(135deg, #ff9d00, #ff6a00)",
+                  background: "linear-gradient(90deg, #ffffff, #ffffff)",
                 display: "flex",
                 alignItems: "center",
+                border: darkMode ? "1px solid rgba(9, 9, 9, 0.72)" : "2px solidrgba(0, 0, 0, 0.78))",
                 justifyContent: "center",
-                color: "#fff",
+                color: "#000000",
                 fontWeight: 600,
                 fontSize: 18,
               }}
@@ -400,7 +404,7 @@ const Dashboard = () => {
                   marginBottom: 22,
                   borderRadius: 12,
                   background: active
-                    ? "linear-gradient(135deg, #ff9d00, #ea580c)"
+                    ? "linear-gradient(90deg, #3896d9ce, #3896d9ce)"
                     : darkMode
                     ? "#1f2937"
                     : "#f3f4f6",
@@ -454,7 +458,7 @@ const Dashboard = () => {
     style={{
       padding: "14px 16px",
       borderRadius: 16,
-      background: "linear-gradient(135deg, #ff9d00, #ea580c)",
+      background: "linear-gradient(135deg, #ea0c0c, #ea0c0c)",
       color: "#fff",
       fontWeight: 600,
       display: "flex",
@@ -462,7 +466,6 @@ const Dashboard = () => {
       justifyContent: "center",
       gap: 10,
       cursor: "pointer",
-      boxShadow: "0 10px 25px rgba(239,68,68,0.3)",
       transition: "0.3s",
     }}
   >
@@ -513,7 +516,7 @@ const Dashboard = () => {
                     borderRadius: 12,
                     border: "none",
                     cursor: "pointer",
-                    background: darkMode ? "#374151" : "#e2e8f0",
+                    background: darkMode ? "#ffffff" : "#e2e8f0",
                     fontWeight: 600,
                   }}
                 >
@@ -527,7 +530,7 @@ const Dashboard = () => {
                     borderRadius: 12,
                     border: "none",
                     cursor: "pointer",
-                    background: "#f59e0b",
+      background: "linear-gradient(135deg, #ea0c0c, #ea0c0c)",
                     color: "#fff",
                     fontWeight: 600,
                   }}

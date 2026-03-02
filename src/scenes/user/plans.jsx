@@ -107,7 +107,7 @@ const Plans = () => {
             <div
               style={{
                 padding: "14px 18px",
-                background: "linear-gradient(135deg, #ff9d00, #ff6a00)",
+                background: "linear-gradient(135deg, #309cea, #309cea)",
 
                 fontWeight: "bold",
                 fontSize: "clamp(14px, 3vw, 18px)",
@@ -169,7 +169,7 @@ const Plans = () => {
                   marginTop: 20,
                   padding: "clamp(10px, 3vw, 14px)",
                   borderRadius: 14,
-                                  background: "linear-gradient(135deg, #ffcc00, #ffcc00)",
+               background: "linear-gradient(135deg, #4aa2e1, #4aa2e1)",
 
                   border: "none",
                   fontWeight: "bold",
@@ -194,7 +194,7 @@ const StatBlock = ({ value, label, green, gold }) => (
       style={{
         fontSize: "clamp(14px, 3.5vw, 20px)",
         fontWeight: "bold",
-        color: green ? "#22c55e" : gold ? "#fbbf24" : "#ffffff",
+        color: green ? "#22c55e" : gold ? "#4aa2e1" : "#ffffff",
       }}
     >
       {value}

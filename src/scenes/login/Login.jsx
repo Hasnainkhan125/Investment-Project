@@ -61,6 +61,8 @@ useEffect(() => {
   checkSession();
 }, [navigate]);
 
+
+
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -129,7 +131,7 @@ useEffect(() => {
           alignItems: "center",
         }}
       >
-        <CircularProgress sx={{ color: "#ea910c" }} />
+        <CircularProgress sx={{ color: "#309cea" }} />
       </Box>
     );
   }
@@ -152,14 +154,14 @@ useEffect(() => {
           width: 100,
           height: 100,
           borderRadius: 4,
-          background: "linear-gradient(90deg, #f59e0b, #ea580c)",
+         background: "linear-gradient(90deg, #309cea, #309cea)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           mb: 3,
-        }}
+        }}  
       >
-        <HiBolt size={50} color="#ffe100" />
+        <HiBolt size={50} color="#ffffff" />
       </Box>
 
       {/* Title */}
@@ -174,7 +176,7 @@ useEffect(() => {
         Invest{" "}
         <span
           style={{
-            background: "linear-gradient(90deg, #f59e0b, #ea580c)",
+            background: "linear-gradient(90deg, #309cea, #1f83cb)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
           }}
@@ -226,7 +228,7 @@ useEffect(() => {
               flex: 1,
               textAlign: "center",
               py: 1.5,
-              background: "linear-gradient(90deg, #f59e0b, #ea580c)",
+                  background: "linear-gradient(90deg, #309cea, #309cea)",
               color: "#fff",
               borderRadius: 10,
               fontWeight: 600,
@@ -309,7 +311,7 @@ useEffect(() => {
             borderRadius: 10,
             fontSize: "15px",
             fontWeight: 700,
-            background: "linear-gradient(90deg, #f59e0b, #ea580c)",
+                  background: "linear-gradient(90deg, #309cea, #309cea)",
             color: "#fff",
           }}
         >
