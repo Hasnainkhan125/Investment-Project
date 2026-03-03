@@ -23,62 +23,73 @@ const ReferralCard = ({ darkMode }) => {
   const [referralLink, setReferralLink] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  // Generate a random referral code
-const generateReferralCode = (length = 6) => {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let code = "";
-  for (let i = 0; i < length; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-};
-  // Initialize referral code and link
-useEffect(() => {
-  const storedUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+  const generateReferralCode = (length = 6) => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let code = "";
+    for (let i = 0; i < length; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  };
 
-  // Use existing code if available, else generate one
-  const code = storedUser.referralCode || generateReferralCode();
-  
-  // Save back to localStorage (optional, you should save it in DB ideally)
-  localStorage.setItem(
-    "currentUser",
-    JSON.stringify({ ...storedUser, referralCode: code })
-  );
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    const code = storedUser.referralCode || generateReferralCode();
 
-  setReferralCode(code);
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify({ ...storedUser, referralCode: code })
+    );
 
-  // This is your real project link
-  setReferralLink(`https://investtoday2.netlify.app/user-dashboard?ref=${code}`);
-}, []);
+    setReferralCode(code);
+    setReferralLink(
+      `https://investtoday2.netlify.app/user-dashboard?ref=${code}`
+    );
+  }, []);
 
-  // Copy referral link
   const handleCopyReferral = () => {
     navigator.clipboard.writeText(referralLink);
     setOpenSnackbar(true);
   };
 
   return (
-    <Box sx={{ mb: 3, width: "100%", mx: "auto", }}>
+    <Box sx={{ mb: 4, width: "100%", maxWidth: 500, mx: "auto", px: 2 }}>
       <Paper
         sx={{
-          p: 4,
-          borderRadius: 6,
-          background: isDark
-            ? "linear-gradient(135deg, #1f2937, #111827)"
-            : "#fff",
+          p: { xs: 3, sm: 4 },
+          borderRadius: 4,
           display: "flex",
           flexDirection: "column",
-          gap: 2,
+          gap: 2.5,
+          backdropFilter: "blur(12px)",
+          background: isDark
+            ? "rgba(30, 41, 59, 0.7)"
+            : "rgba(255, 255, 255, 0.9)",
+          boxShadow: isDark
+            ? "0 10px 25px rgba(0,0,0,0.3)"
+            : "0 8px 20px rgba(0,0,0,0.1)",
           transition: "all 0.3s ease",
         }}
       >
         <Typography
-          sx={{ fontSize: 18, color: isDark ? "#aaa" : "#666", letterSpacing: 1 }}
+          sx={{
+            fontSize: { xs: 17, sm: 18 },
+            fontWeight: 600,
+            color: isDark ? "#ddd" : "#555",
+            letterSpacing: 0.5,
+          }}
         >
-       Invite & Earn
+          Invite & Earn
         </Typography>
 
-        <Box sx={{ display: "flex", gap: 2, alignItems: "center", flexWrap: "nowrap" }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            alignItems: "center",
+            flexWrap: { xs: "wrap", sm: "nowrap" },
+          }}
+        >
           <TextField
             value={referralLink}
             fullWidth
@@ -92,17 +103,19 @@ useEffect(() => {
               },
             }}
           />
-          <Tooltip title="Copy Link">
+          <Tooltip title="Copy Link" arrow>
             <IconButton
               onClick={handleCopyReferral}
               sx={{
-                  background: "linear-gradient(90deg, #309cea, #309cea)",
+                background: "linear-gradient(90deg, #3b82f6, #2563eb)",
                 color: "#fff",
                 borderRadius: 3,
                 p: 1.5,
+                transition: "all 0.3s ease",
                 "&:hover": {
                   transform: "scale(1.1)",
-                  boxShadow: "0 15px 35px #7db6de",
+                  boxShadow: "0 15px 35px rgba(37,99,235,0.4)",
+                  background: "linear-gradient(90deg, #2563eb, #3b82f6)",
                 },
               }}
             >
@@ -110,10 +123,9 @@ useEffect(() => {
             </IconButton>
           </Tooltip>
         </Box>
-
       </Paper>
 
-      {/* Snackbar */}
+      {/* Modern Snackbar */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={2000}
@@ -126,7 +138,7 @@ useEffect(() => {
           icon={<CheckCircleIcon />}
           sx={{
             width: "90%",
-            maxWidth: 300,
+            maxWidth: 320,
             borderRadius: 12,
             fontWeight: 500,
             fontSize: 16,
@@ -136,8 +148,9 @@ useEffect(() => {
             alignItems: "center",
             gap: 1,
             backdropFilter: "blur(12px)",
-            backgroundColor: isDark ? "#333" : "#fff",
-            color: isDark ? "#fff" : "#111",    
+            backgroundColor: isDark ? "#1e293b" : "#fff",
+            color: isDark ? "#fff" : "#111",
+            boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
           }}
         >
           Referral link copied!
@@ -147,4 +160,4 @@ useEffect(() => {
   );
 };
 
-export default ReferralCard;
+export default ReferralCard;  

@@ -22,7 +22,9 @@
   import { HiArrowRight, HiUser, HiUsers, HiStar } from "react-icons/hi";
   import { useNavigate } from "react-router-dom";
   import { supabase } from "../../supabaseClient";
-  import ReferralCard from "../user/ReferralCard"; // adjust path as needed
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import ImageCarousel from "../user/ImageCarousel"; // adjust path as needed
+import { motion } from "framer-motion";
 
   import { HiOutlineUser } from "react-icons/hi2";
   // Generate random referral code
@@ -48,12 +50,32 @@
     });
 
     const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [walletBalance, setWalletBalance] = useState(0);
     const [hideBalance, setHideBalance] = useState(true);
 
-    
-
+const sectionVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i = 1) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.15,
+      duration: 0.6,
+      ease: "easeOut",
+    },
+  }),
+};
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut",
+    },
+  },
+};
     // ✅ Get Logged-in User Name
     useEffect(() => {
       const getUser = async () => {
@@ -76,155 +98,280 @@
       const balance = Number(localStorage.getItem("walletBalance")) || 0;
       setWalletBalance(balance);
 
-
-      setTimeout(() => setLoading(false), 1200);
-
     }, [referralCode, walletBalance]);
 
 
     
 
-    const handleCopyReferral = () => {
-      navigator.clipboard.writeText(referralCode);
-      setSnackbarOpen(false);
-      setTimeout(() => setSnackbarOpen(true), 50);
-    };
+
 
     const colors = {
-      background: darkMode ? "#0f172a" : "#f5f7fb",
+      background: darkMode ? "#0f172a" : "#e6e6e6",
       cardBg: darkMode ? "#1e293b" : "#ffffff",
       textPrimary: darkMode ? "#f8fafc" : "#111827",
       textSecondary: darkMode ? "#a1a1aa" : "#636362",
     };
 
 
-    if (loading) {
-      return (
-        <Box
-          sx={{
-            height: "100vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-          }}
-        >
-          <CircularProgress size={40} sx={{ color: "#3b82f6" }} />
-          <Typography sx={{ mt: 2, fontWeight: 500, color: colors.textPrimary }}>
-            Loading Dashboard...
-          </Typography>
-        </Box>
-      );
-    }
-
     return (
-      <Box sx={{ minHeight: "100vh" }}>
+      <Box sx={{ }}>
         {/* Header */}
         <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-            Dashboard
-          </Typography>
-          <Typography sx={{ mt: 2, fontSize: "1.1rem", letterSpacing: "0.4px" }}>
-            Welcome back, {userName} 👋
-          </Typography>
+<Box
+  sx={{
+    overflow: "hidden", // ensures animation doesn't overflow
+  }}
+>
+  <Typography
+    sx={{
+      fontSize: { xs: "1rem", sm: "1.1rem", md: "1.3rem" }, // responsive
+      letterSpacing: "0.5px",
+      fontWeight: 500,
+      color: "#94a3b8",
+      opacity: 0,
+      transform: "translateX(-20px)",
+      animation: "fadeSlideIn 0.8s forwards",
+      "@keyframes fadeSlideIn": {
+        "0%": { opacity: 0, transform: "translateX(-20px)" },
+        "100%": { opacity: 1, transform: "translateX(0)" },
+      },
+    }}
+  >
+    Welcome back,{" "}
+    <span
+      style={{
+        background: "linear-gradient(90deg, #5480e7, #60a5fa, #3b82f6)",
+        backgroundSize: "200% 200%",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        fontWeight: 700,
+        display: "inline-block",
+        animation: "gradientShift 3s ease infinite",
+      }}
+    >
+      {userName}
+    </span>{" "}
+    👋
+  </Typography>
+
+  <style>
+    {`
+      @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+    `}
+  </style>
+</Box>
         </Box>
 
-        {/* Balance Card */}
-        <Paper
-          sx={{
-            mb: 4,
-            p: 4,
-            borderRadius: 6,
-                background: darkMode ? "#309cea" : "#3896d9",
-            color: "#fff",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          <Box
-            sx={{
-              position: "absolute",
-              top: -60,
-              right: -60,
-              width: 200,
-              height: 200,
-              background: "rgba(255,255,255,0.15)",
-              borderRadius: "50%",
-              filter: "blur(60px)",
-            }}
-          />
-          <Typography sx={{ fontSize: 15, opacity: 0.85, letterSpacing: 0.5 }}>
-            Available Balance
-          </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 2 }}>
-            <Typography sx={{ fontSize: { xs: 30, sm: 42 }, fontWeight: 700, letterSpacing: 1 }}>
-              {hideBalance ? "******" : `PKR ${walletBalance.toLocaleString()}`}
-            </Typography>
-            <IconButton
-              onClick={() => setHideBalance(!hideBalance)}
-              sx={{
-                background: "rgba(255,255,255,0.2)",
-                color: "#fff",
-                borderRadius: 3,
-                p: 1.4,
-                "&:hover": { background: "rgba(255,255,255,0.35)", transform: "scale(1.1)" },
-              }}
-            >
-              {hideBalance ? <HiOutlineEye size={22} /> : <HiOutlineEyeSlash size={22} />}
-            </IconButton>
-          </Box>
 
-          {/* Deposit & Withdraw Buttons */}
-          <Box sx={{ display: "flex", gap: 2, mt: 4, justifyContent: "flex-start" }}>
-            <Button
-              onClick={() => navigate("/user-dashboard/deposit")}
-              sx={{
-                width: 160,
-                py: 1.5,
-                borderRadius: 50,
-                fontWeight: 700,
-                textTransform: "uppercase",
-                background: darkMode ? "#309cea" : "#3896d9",
-                color: "#fff",
-                border: "2px solid #7db6de",
-                transition: "all 0.4s ease",
-                "&:hover": {
-                  transform: "translateY(-2px) scale(1.02)",
-                  background: "linear-gradient(90deg, #309cea, #309cea)",
-                  border: "2px solid #85bfe8",
-                },
-              }}
-            >
-              Deposit
-            </Button>
-            <Button
-              onClick={() => navigate("/user-dashboard/withdraw")}
-              sx={{
-                width: 160,
-                py: 1.5,
-                borderRadius: 50,
-                fontWeight: 700,
-                textTransform: "uppercase",
-                background: "linear-gradient(90deg, #ffffff, #ffffff)",
-                color: "#000000",
-                transition: "all 0.4s ease",
-                "&:hover": { transform: "translateY(-2px) scale(1.02)" },
-              }}
-            >
-              Withdraw
-            </Button>
-          </Box>
-        </Paper>
+<motion.div
+  variants={fadeUp}
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true, amount: 0.2 }}
+>
+{/* Balance Card */}
+<Paper
+  elevation={0}
+  sx={{
+    mb: 4,
+    p: 3,
+    borderRadius: 5,
+    background: darkMode
+      ? "linear-gradient(135deg, #0f172a, #1e293b)"
+      : "linear-gradient(135deg, #0080ff, #0061c2)",
 
-  <Grid container spacing={2} mb={3}>
+    color: "#fff",
+    position: "relative",
+    overflow: "hidden",
+    transition: "all 0.3s ease",
+  }}
+>
+  {/* Subtle Glow */}
+  <Box
+    sx={{
+      position: "absolute",
+      top: -50,
+      right: -50,
+      width: 140,
+      height: 140,
+      background: "rgba(255,255,255,0.08)",
+      borderRadius: "50%",
+      filter: "blur(50px)",
+    }}
+  />
+
+  {/* Header */}
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+    }}
+  >
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+<Box
+  sx={{
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "rgba(255,255,255,0.15)",
+  }}
+>
+  <AccountBalanceWalletIcon
+    sx={{
+      fontSize: 30,
+      color: "#fff",
+    }}
+  />
+</Box>      <Typography sx={{ fontSize: 17, opacity: 0.85 }}>
+        Available Balance
+      </Typography>
+    </Box>
+
+    <IconButton
+      onClick={() => setHideBalance(!hideBalance)}
+      size="small"
+      sx={{
+        background: "rgba(255,255,255,0.12)",
+        color: "#fff",
+        borderRadius: 2,
+        p: 1,
+        "&:hover": {
+          background: "rgba(255,255,255,0.25)",
+        },
+      }}
+    >
+      {hideBalance ? <HiOutlineEye size={18} /> : <HiOutlineEyeSlash size={18} />}
+    </IconButton>
+  </Box>
+
+  {/* Balance */}
+  <Typography
+    sx={{
+      mt: 1.5,
+      fontSize: { xs: 36, sm: 32 },
+      fontWeight: 700,
+      letterSpacing: 0.5,
+    }}
+  >
+    {hideBalance ? "******" : `PKR ${walletBalance.toLocaleString()}`}
+  </Typography>
+
+  {/* Buttons - Full Width with Small Gap */}
+  <Box
+    sx={{
+      display: "flex",
+      gap: 1.5, // small gap
+      mt: 2.5,
+    }}
+  >
+    <Button
+      fullWidth
+      onClick={() => navigate("/user-dashboard/deposit")}
+      sx={{
+        py: 1.3,
+        borderRadius: 10,
+        fontSize: 19,
+        fontWeight: 600,
+        textTransform: "none",
+        background: "#ffffff",
+        color: "#2563eb",
+        transition: "all 0.3s ease",
+        "&:hover": {
+          background: "#f1f5f9",
+          transform: "translateY(-2px)",
+        },
+      }}
+    >
+      Deposit
+    </Button>
+
+    <Button
+      fullWidth
+      onClick={() => navigate("/user-dashboard/withdraw")}
+      sx={{
+        py: 1.3,
+        borderRadius: 10,
+        fontWeight: 600,
+                fontSize: 19,
+        textTransform: "none",
+        background: "linear-gradient(135deg, #2782dc, #0c72d8)",
+        border: "1px solid rgba(255,255,255,0.15)",
+        color: "#fff",
+        transition: "all 0.3s ease",
+        "&:hover": {
+          background: "rgba(255,255,255,0.25)",
+          transform: "translateY(-2px)",
+        },
+      }}
+    >
+      Withdraw
+    </Button>
+  </Box>
+  
+</Paper>
+</motion.div>
+
+
+{/* Announcement Section */}
+  <Box
+    sx={{
+      mt: -2, // slightly closer to balance card
+      borderRadius: 5,
+      overflow: "hidden",
+      background: darkMode
+        ? "linear-gradient(135deg, #0f172a, #1e293b)"
+        : "linear-gradient(135deg, #ffffff, #ffffff)",
+    }}
+  >
+    <Box
+      sx={{
+        width: "100%",
+        py: 1.5,
+        fontSize: 17,
+        px: 2,
+        color: darkMode ? "#fff" : "#0f172a", 
+        whiteSpace: "nowrap",
+        display: "inline-block",
+        animation: "marquee 10s linear infinite",
+      }}
+    >
+      🎉 Welcome to InvestPro — Pakistan's #1 Trusted Investment Platform Secure • Fast • Reliable Withdrawals
+  </Box>
+
+    <style>
+      {`
+        @keyframes marquee {
+          0% { transform: translateX(100%); }
+          100% { transform: translateX(-100%); }
+        }
+      `}
+    </style>
+  </Box>
+<ImageCarousel darkMode={darkMode} />
+
+
+  <Grid container spacing={2} >
     {[ /* your wallet cards */ ].map((item, index) => (
       <Grid item xs={6} key={index}>
       </Grid>
     ))}
   </Grid>
 
-  <ReferralCard darkMode={darkMode} />
-
+<motion.div
+  variants={fadeUp}
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true, amount: 0.2 }}
+>
+  
 <Grid container spacing={2} >
   {[
     {
@@ -311,11 +458,11 @@
         {/* Icon Container */}
         <Box
           sx={{
-            width: 65,
-            height: 65,
+            width: 75,
+            height: 75,
             borderRadius: "18px",
             mx: "auto",
-            mb: 2.5,
+            mb: 2,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -347,6 +494,7 @@
     </Grid>
   ))}
 </Grid>
+</motion.div>
         {/* Snackbar */}
         <Snackbar open={snackbarOpen} autoHideDuration={2000} onClose={() => setSnackbarOpen(false)} anchorOrigin={{ vertical: "top", horizontal: "center" }} TransitionComponent={(props) => <Slide {...props} direction="down" />} sx={{ pointerEvents: "none" }}>
           <Alert severity="success" sx={{ backgroundColor: "#edecec", color: "#000", borderRadius: 10, padding: "10px 20px", pointerEvents: "auto" }}>

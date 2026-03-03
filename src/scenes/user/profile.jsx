@@ -26,7 +26,8 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-
+import PersonIcon from "@mui/icons-material/Person";
+import EmailIcon from "@mui/icons-material/Email";
 import { supabase } from "../../supabaseClient";
 
 function SlideTransition(props) {
@@ -45,9 +46,7 @@ const Profile = ({ darkMode }) => {
     email: "",
     phone: storedData.phone || "",
   });
-  const [profilePic, setProfilePic] = useState(
-    storedData.dp || "https://i.pravatar.cc/300"
-  );
+
   const [showPassword, setShowPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -78,20 +77,11 @@ const Profile = ({ darkMode }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setProfilePic(reader.result);
-      reader.readAsDataURL(file);
-    }
-  };
+
 
   const handleSave = () => {
     setLoading(true);
     setTimeout(() => {
-      const dataToSave = { ...formData, dp: profilePic };
-      localStorage.setItem("profileData", JSON.stringify(dataToSave));
       setLoading(false);
       setSnackbarMessage("Profile Updated Successfully!");
       setOpenSnackbar(true);
@@ -109,7 +99,6 @@ const Profile = ({ darkMode }) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
-        py: 4,
       }}
     >
       <Paper
@@ -119,93 +108,111 @@ const Profile = ({ darkMode }) => {
           maxWidth: 500,
           borderRadius: 4,
           background: "none",
-          p: 1,
           backdropFilter: "blur(20px)",
           color: textColor,
           position: "relative",
         }}
       >
-        {/* HEADER */}
-        <Box
-          sx={{
-            position: "relative",
-            borderRadius: 4,
-            p: 4,
-            mb: 4,
-            textAlign: "center",
-                  background: "linear-gradient(90deg, #309cea, #309cea)",
-            color: "#fff",
-            overflow: "hidden",
-          }}
-        >
-          <Box
-            sx={{
-              position: "absolute",
-              top: -40,
-              right: -40,
-              width: 150,
-              height: 150,
-              background: "rgba(255,255,255,0.15)",
-              borderRadius: "50%",
-              filter: "blur(40px)",
-            }}
-          />
+    {/* HEADER */}
+<Box
+  sx={{
+    position: "relative",
+    borderRadius: 4,
+    p: 4,
+    mb: 4,
+    textAlign: "center",
+    background: "linear-gradient(135deg, #2782dc, #0c72d8)",
+    color: "#fff",
+    overflow: "hidden",
+  }}
+>
+  {/* Soft Glow */}
+  <Box
+    sx={{
+      position: "absolute",
+      top: -40,
+      right: -40,
+      width: 150,
+      height: 150,
+      background: "rgba(255,255,255,0.15)",
+      borderRadius: "50%",
+      filter: "blur(40px)",
+    }}
+  />
+{/* Modern Gradient Avatar */}
+<Box
+  sx={{
+    display: "flex",
+    justifyContent: "center",
+    mb: 3,
+  }}
+>
+  <Box
+    sx={{
+      position: "relative",
+      width: 110,
+      height: 110,
+      borderRadius: "50%",
+      background: "linear-gradient(135deg, #4f94f4, #4f94f4)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      transition: "all 0.4s ease",
+    }}
+  >
+    {/* Inner Glass Layer */}
+    <Box
+      sx={{
+        width: 100,
+        height: 100,
+        borderRadius: "50%",
+        backdropFilter: "blur(15px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <PersonIcon sx={{ fontSize: 50, color: "#fff" }} />
+    </Box>
+  </Box>
+</Box>
+  {/* Name with Icon */}
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 1,
+      mt: 1,
+    }}
+  >
+    <Typography
+      variant="h4"
+      textTransform={'lowercase'}
+      fontWeight={700}
+      sx={{ fontFamily: "Poppins, sans-serif" }}
+    >
+      {formData.name || "User Name"}
+    </Typography>
+  </Box>
 
-          <Box
-            position="relative"
-            display="inline-block"
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-            sx={{ mb: 2 }}
-          >
-            <Avatar
-              src={profilePic}
-              sx={{
-                width: 110,
-                height: 110,
-                border: "2px solid #ffffff2e",
-                backdropFilter: "blur(10px)",
-              }}
-            />
-            <Fade in={hover}>
-              <Box
-                sx={{
-                  position: "absolute",
-                  inset: 0,
-                  borderRadius: "50%",
-                  background: "rgba(0,0,0,0.5)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Tooltip title="Change Picture">
-                  <IconButton component="label" sx={{ color: "#fff" }}>
-                    <PhotoCameraIcon />
-                    <input
-                      type="file"
-                      hidden
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                    />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            </Fade>
-          </Box>
-
-          <Typography
-            variant="h3"
-            fontWeight={700}
-            sx={{ mt: 1, fontFamily: "Poppins, sans-serif" }}
-          >
-            {formData.name || "User Name"}
-          </Typography>
-
-          <Typography variant="body2" sx={{ opacity: 0.85, fontSize: 13 }}>
-            {formData.email || "user@email.com"}
-          </Typography>
-        </Box>
+  {/* Email with Icon */}
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 1,
+      mt: 1,
+      opacity: 0.9,
+    }}
+  >
+    <EmailIcon sx={{ fontSize: 18 }} />
+    <Typography fontSize={13}>
+      {formData.email || "user@email.com"}
+    </Typography>
+  </Box>
+ </Box>
 
         {/* COLORED STATS CARDS */}
         <Grid container spacing={2} mb={3}>
@@ -239,13 +246,21 @@ const Profile = ({ darkMode }) => {
           ))}
         </Grid>
 
-<Paper elevation={1} sx={{ mt: 3, borderRadius: 3, overflow: "hidden" }}>
+<Paper
+  elevation={0}
+  sx={{
+    mt: 3,
+    borderRadius: 4,
+    overflow: "hidden",
+    background: "#ffffff",
+    boxShadow: "0 15px 40px rgba(0,0,0,0.06)",
+  }}
+>
   {[
     { label: "Change Password", key: "password", icon: <LockIcon /> },
     { label: "Deposit Record", key: "deposit", icon: <ReceiptLongIcon /> },
-    { label: "Withdraw Record", key: "withdraw", icon: <ReceiptLongIcon /> },
     { label: "Help & FAQ", key: "faq", icon: <HelpOutlineIcon /> },
-  ].map((item, index) => (
+  ].map((item, index, arr) => (
     <Box
       key={index}
       onClick={() => {
@@ -254,13 +269,13 @@ const Profile = ({ darkMode }) => {
             setActivePage("password");
             break;
           case "deposit":
-            navigate("/user-dashboard/deposit-history"); // ✅ full nested path
+            navigate("/user-dashboard/deposit-history");
             break;
           case "withdraw":
-            navigate("/user-dashboard/withdraw-history"); // ✅ full nested path
+            navigate("/user-dashboard/withdraw-history");
             break;
           case "faq":
-            navigate("/user-dashboard/faq"); // ✅ full nested path
+            navigate("/user-dashboard/faq");
             break;
           default:
             break;
@@ -270,23 +285,65 @@ const Profile = ({ darkMode }) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        p: 2,
+        px: 3,
+        py: 2.5,
         cursor: "pointer",
-        backgroundColor: "#fff",
-        "&:hover": { backgroundColor: "#f9fafb" },
+        transition: "all 0.3s ease",
+        borderBottom:
+          index !== arr.length - 1
+            ? "1px solid #f1f5f9"
+            : "none",
+
+        "&:hover": {
+          background: "#f8fbff",
+          transform: "translateX(4px)",
+        },
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Box sx={{ color: "#0088f8" }}>{item.icon}</Box>
-        <Typography fontSize={14} color="#111">
+      {/* Left Side */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2.5 }}>
+        {/* Icon Background */}
+        <Box
+          sx={{
+            width: 42,
+            height: 42,
+            borderRadius: "12px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background:
+              "linear-gradient(135deg,#0080ff,#0066ff)",
+            color: "#fff",
+            boxShadow: "0 8px 20px rgba(0,128,255,0.25)",
+          }}
+        >
+          {item.icon}
+        </Box>
+
+        <Typography
+          fontSize={15}
+          fontWeight={600}
+          color="#0f172a"
+        >
           {item.label}
         </Typography>
       </Box>
-      <ArrowForwardIosIcon sx={{ fontSize: 14, color: "#999" }} />
+
+      {/* Arrow */}
+      <ArrowForwardIosIcon
+        sx={{
+          fontSize: 16,
+          color: "#94a3b8",
+          transition: "0.3s",
+          ".MuiBox-root:hover &": {
+            transform: "translateX(4px)",
+            color: "#0080ff",
+          },
+        }}
+      />
     </Box>
   ))}
 </Paper>
-
         {/* Save Button */}
         <Box mt={3} textAlign="center">
           <Button
@@ -295,7 +352,8 @@ const Profile = ({ darkMode }) => {
             disabled={loading}
             fullWidth
             sx={{
-                  background: "linear-gradient(90deg, #309cea, #309cea)",
+                        background: "linear-gradient(135deg, #2782dc, #0c72d8)",
+
               color: "#fff",
               borderRadius: 2,
               textTransform: "none",
@@ -305,7 +363,7 @@ const Profile = ({ darkMode }) => {
               fontWeight: 600,
               transition: "all 0.3s ease",
               "&:hover": {
-                  background: "linear-gradient(90deg, #2f88c8, #6fbcf4)",
+                  background: "linear-gradient(90deg, #0a5fb4, #0c72d8)",
                 transform: "translateY(-3px) scale(1.05)",
               },
             }}

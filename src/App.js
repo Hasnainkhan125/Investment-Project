@@ -4,9 +4,7 @@ import { CssBaseline, ThemeProvider, CircularProgress, Box } from "@mui/material
 import { ColorModeContext, useMode } from "./theme";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import { supabase } from "./supabaseClient.js";
-import DepositHistory from "../src/scenes/user/deposithistory.jsx"; // the component we just made
-import WithdrawHistory from "./scenes/user/withdrawhistory.jsx"; // Withdraw
-import Support from "./scenes/user/support.jsx";
+
 // 🔹 Layout
 import UserLayout from "./scenes/user/UserLayout";
 
@@ -17,6 +15,9 @@ import Withdraw from "./scenes/user/Withdraw";
 import Profile from "./scenes/user/profile";
 import Home from "./scenes/user/home.jsx";
 import Team from "./scenes/user/team.jsx";
+import TaskList from "./scenes/user/task.jsx";
+import DepositHistory from "./scenes/user/deposithistory.jsx";
+import Support from "./scenes/user/support.jsx";
 
 // 🔹 Auth
 import Login from "./scenes/login/Login";
@@ -31,21 +32,45 @@ function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // ✅ Tasks state
+  const [tasks, setTasks] = useState([]);
+
   // ✅ Listen to Supabase session
   useEffect(() => {
     const getSession = async () => {
       const { data } = await supabase.auth.getSession();
       setSession(data.session);
       setLoading(false);
+
+      // Fetch tasks for logged-in user
+      if (data.session) {
+        fetchTasks(data.session.user.id);
+      }
+    };
+
+    const fetchTasks = async (userId) => {
+      const { data, error } = await supabase
+        .from("tasks")
+        .select("*")
+        .eq("user_id", userId);
+
+      if (!error && data) {
+        setTasks(data);
+      } else {
+        // fallback mock tasks
+        setTasks([
+          { title: "Submit Report", description: "Submit monthly report", dueDate: "2026-03-05" },
+          { title: "Team Meeting", description: "Discuss project updates", dueDate: "2026-03-06" },
+        ]);
+      }
     };
 
     getSession();
 
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-      }
-    );
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) fetchTasks(session.user.id);
+    });
 
     return () => {
       listener.subscription.unsubscribe();
@@ -71,12 +96,10 @@ function App() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-
         <Suspense
           fallback={
             <Box
               sx={{
-                minHeight: "100vh",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -91,26 +114,15 @@ function App() {
             <Route
               path="/"
               element={
-                session ? (
-                  <Navigate to="/user-dashboard" replace />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
+                session ? <Navigate to="/user-dashboard" replace /> : <Navigate to="/login" replace />
               }
             />
 
             {/* Auth */}
             <Route
               path="/login"
-              element={
-                session ? (
-                  <Navigate to="/user-dashboard" replace />
-                ) : (
-                  <Login />
-                )
-              }
+              element={session ? <Navigate to="/user-dashboard" replace /> : <Login />}
             />
-
             <Route path="/register" element={<Register />} />
             <Route path="/choose-panel" element={<ChoosePanel />} />
 
@@ -129,11 +141,16 @@ function App() {
               <Route path="withdraw" element={<Withdraw />} />
               <Route path="profile" element={<Profile />} />
               <Route path="team" element={<Team />} />
-              
               <Route path="faq" element={<FAQPage />} />
-  <Route path="deposit-history" element={<DepositHistory />} /> {/* relative path */}
-  <Route path="withdraw-history" element={<WithdrawHistory />} /> {/* relative path */}
-<Route path="support" element={<Support />} />
+              <Route path="deposit-history" element={<DepositHistory />} />
+              <Route path="support" element={<Support />} />
+
+              {/* ✅ TaskList Route */}
+              <Route
+                path="tasks"
+                element={<TaskList userName={session?.user?.email || "User"} tasks={tasks} />}
+              />
+
               <Route path="*" element={<Navigate to="/user-dashboard" replace />} />
             </Route>
 

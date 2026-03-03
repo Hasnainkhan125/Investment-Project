@@ -7,6 +7,7 @@ import {
   IconButton,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { motion } from "framer-motion";
 
 const FAQ = ({ darkMode }) => {
   const isDark = darkMode;
@@ -20,7 +21,7 @@ const FAQ = ({ darkMode }) => {
     {
       question: "When can I withdraw?",
       answer:
-        "You can withdraw anytime your balance is above the minimum limit (300 PKR). Withdrawals are usually processed within 24 hours..",
+        "You can withdraw anytime your balance is above the minimum limit (300 PKR). Withdrawals are usually processed within 24 hours.",
     },
     {
       question: "How does the commission system work?",
@@ -45,93 +46,109 @@ const FAQ = ({ darkMode }) => {
         width: "100%",
         maxWidth: 900,
         mx: "auto",
-        mt: 2,
+        mt: 4,
+        px: 2,
       }}
     >
+      {/* Title */}
       <Typography
-        variant="h3"
-        fontWeight={700}
+        variant="h4"
+        fontWeight={800}
         mb={4}
-        color={isDark ? "#fff" : "#111"}
+        textAlign="center"
         sx={{
-          fontFamily: "Poppins, sans-serif",
-          textAlign: "center",
-                  background: "linear-gradient(90deg, #309cea, #309cea)",
+          background: "linear-gradient(90deg, #2563eb, #3b82f6)",
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
         }}
       >
- Common Questions
+        Common Questions
       </Typography>
 
-      {faqs.map((faq, index) => (
-        <Paper
-          key={index}
-          elevation={3}
-          sx={{
-            mb: 3,
-            borderRadius: 3,
-            overflow: "hidden",
-            backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "#fff",
-            color: isDark ? "#fff" : "#111",
-            transition: "transform 0.3s, box-shadow 0.3s",
-            "&:hover": {
-              transform: "translateY(-3px)",
-              boxShadow: "0 12px 30px rgba(0,0,0,0.15)",
-            },
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              p: 2.2,
-              cursor: "pointer",
-              transition: "background 0.3s",
-              background: expandedIndex === index
-                ? isDark
-                  ? "rgba(255,255,255,0.1)"
-                  : "rgba(245,158,11,0.1)"
-                : "transparent",
-            }}
-            onClick={() => toggleExpand(index)}
-          >
-            <Typography fontWeight={600} fontSize={15}>
-              {faq.question}
-            </Typography>
-            <IconButton
-              sx={{
-                transform:
-                  expandedIndex === index ? "rotate(180deg)" : "rotate(0deg)",
-                transition: "transform 0.3s",
-                color: isDark ? "#fff" : "#111",
-              }}
-            >
-              <ExpandMoreIcon />
-            </IconButton>
-          </Box>
+      {faqs.map((faq, index) => {
+        const isOpen = expandedIndex === index;
 
-          <Collapse in={expandedIndex === index} timeout="auto" unmountOnExit>
-            <Box
+        return (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            viewport={{ once: true }}
+          >
+            <Paper
+              elevation={0}
               sx={{
-                p: 2,
-                borderTop: isDark
-                  ? "1px solid rgba(255,255,255,0.1)"
-                  : "1px solid #eee",
-                fontSize: 14,
-                lineHeight: 1.6,
-                color: isDark ? "#ddd" : "#333",
-                backgroundColor: isDark
-                  ? "rgba(255,255,255,0.02)"
-                  : "rgba(245,245,245,0.5)",
+                mb: 3,
+                borderRadius: 4,
+                overflow: "hidden",
+                backdropFilter: "blur(10px)",
+                background: isDark
+                  ? "rgba(255,255,255,0.05)"
+                  : "rgba(255,255,255,0.9)",
+                border: isDark
+                  ? "1px solid rgba(255,255,255,0.08)"
+                  : "1px solid rgba(0,0,0,0.06)",
+                transition: "all 0.3s ease",
+                boxShadow: isOpen
+                  ? "0 15px 40px rgba(37,99,235,0.15)"
+                  : "0 5px 15px rgba(0,0,0,0.05)",
               }}
             >
-              {faq.answer}
-            </Box>
-          </Collapse>
-        </Paper>
-      ))}
+              {/* Question */}
+              <Box
+                onClick={() => toggleExpand(index)}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  p: 2.5,
+                  cursor: "pointer",
+                }}
+              >
+                <Typography
+                  fontWeight={600}
+                  fontSize={15}
+                  color={isDark ? "#fff" : "#111"}
+                >
+                  {faq.question}
+                </Typography>
+
+                <IconButton
+                  sx={{
+                    transform: isOpen
+                      ? "rotate(180deg)"
+                      : "rotate(0deg)",
+                    transition: "all 0.3s ease",
+                    color: isDark ? "#fff" : "#111",
+                  }}
+                >
+                  <ExpandMoreIcon />
+                </IconButton>
+              </Box>
+
+              {/* Answer */}
+              <Collapse in={isOpen} timeout="auto" unmountOnExit>
+                <Box
+                  sx={{
+                    px: 2.5,
+                    pb: 2.5,
+                    pt: 1,
+                    fontSize: 14,
+                    lineHeight: 1.7,
+                    color: isDark ? "#ccc" : "#444",
+                    borderTop: isDark
+                      ? "1px solid rgba(255,255,255,0.08)"
+                      : "1px solid rgba(0,0,0,0.05)",
+                  }}
+                >
+                  {faq.answer}
+                </Box>
+              </Collapse>
+            </Paper>
+          </motion.div>
+        );
+      })}
     </Box>
   );
 };
