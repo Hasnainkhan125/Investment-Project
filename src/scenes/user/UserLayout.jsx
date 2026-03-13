@@ -93,7 +93,7 @@ const Dashboard = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
-  };
+  }; 
 
   const isActiveLink = (path) => {
     if (path === "" && location.pathname === "/user-dashboard") return true;
@@ -101,7 +101,6 @@ const Dashboard = () => {
   };
 
   const userInitial = userName.charAt(0).toUpperCase();
-
   return (
     <div
       style={{
@@ -116,13 +115,12 @@ const Dashboard = () => {
       <div
         style={{
           position: "fixed",
-          top: 0,
           background: darkMode ? "#0f1729" : "#ffffff",
           width: "100%",
           zIndex: 100,
           display: "flex",
           justifyContent: "space-between",
-          padding: isMobile ? 16 : 19,
+          padding: isMobile ? 12 : 19,
           alignItems: "center",
         }}
       >
@@ -151,12 +149,13 @@ const Dashboard = () => {
               boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
             }}
           >
-            <Zap size={22} color="#fff" />
+            <Zap size={15}   color="#fff" />
           </div>
           <span
             style={{
+              display: 'flex',
               fontWeight: 700,
-              fontSize: isMobile ? 20 : 22,
+              fontSize: isMobile ? 10 : 22,
               background: "linear-gradient(90deg, #3b82f6, #60a5fa)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
@@ -196,11 +195,10 @@ const Dashboard = () => {
             })}
 
           <div onClick={() => setDarkMode(!darkMode)} style={{ cursor: "pointer" }}>
-            {darkMode ? <Sun size={20} color="#6fb9ee" /> : <Moon size={20} />}
+            {darkMode ? <Sun size={25} color="#6fb9ee" /> : <Moon size={25} />}
           </div>
 
           {/* Profile Menu */}
-{/* Profile Menu */}
 <div ref={profileRef} style={{ position: "relative" }}>
   <div
     onClick={() => setShowProfileMenu(!showProfileMenu)}
@@ -213,8 +211,8 @@ const Dashboard = () => {
   >
     <div
       style={{
-        width: 36,
-        height: 36,
+        width: 46,
+        height: 46,
         borderRadius: "50%",
         background: "#356fed",
         display: "flex",
@@ -235,7 +233,7 @@ const Dashboard = () => {
         position: "absolute",
         top: 50,
         right: 0,
-        width: 240,
+        width: 290,
         background: darkMode ? "#1f2937" : "#ffffff",
         borderRadius: 16,
         padding: 18,

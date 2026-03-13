@@ -12,12 +12,15 @@ import {
 import { HiOutlineClipboardDocument } from "react-icons/hi2";
 import { FaWhatsapp, FaTelegramPlane, FaCheckCircle } from "react-icons/fa";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { ArrowBackIosNew as ArrowBackIosNewIcon } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 function SlideTransition(props) {
   return <Slide {...props} direction="down" />;
 }
 
 const Team = ({ darkMode }) => {
+  const navigate = useNavigate();
   const [referralCode, setReferralCode] = useState("");
   const [referralLink, setReferralLink] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -40,12 +43,10 @@ const Team = ({ darkMode }) => {
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
     const code = storedUser.referralCode || generateReferralCode();
-
     localStorage.setItem(
       "currentUser",
       JSON.stringify({ ...storedUser, referralCode: code })
     );
-
     setReferralCode(code);
     setReferralLink(
       `https://investtoday2.netlify.app/user-dashboard?ref=${code}`
@@ -59,16 +60,33 @@ const Team = ({ darkMode }) => {
   };
 
   // Share links
-  const shareWhatsApp = () => {
-    const url = `https://api.whatsapp.com/send?text=Join using my referral link: ${referralLink}`;
-    window.open(url, "_blank");
-  };
+const shareWhatsApp = () => {
+  const url = `https://api.whatsapp.com/send?text=Join using my referral link: ${referralLink}`;
+  window.open(url, "_blank");
+};
 
-  const shareTelegram = () => {
-    const url = `https://t.me/share/url?url=${referralLink}&text=Join using my referral link!`;
-    window.open(url, "_blank");
-  };
+const shareTelegram = () => {
+  const url = `https://t.me/share/url?url=${referralLink}&text=Join using my referral link!`;
+  window.open(url, "_blank");
+};
+// Generate referral link for sharing
+useEffect(() => {
+  const storedUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+  const code = storedUser.referralCode || generateReferralCode();
 
+  // Save referral code in localStorage
+  localStorage.setItem(
+    "currentUser",
+    JSON.stringify({ ...storedUser, referralCode: code })
+  );
+
+  setReferralCode(code);
+
+  // ✅ FIX: point to /register instead of /user-dashboard
+  setReferralLink(
+    `https://investtoday2.netlify.app/register?ref=${code}`
+  );
+}, []);
   // Handle level change
   const handleLevelChange = (lvl) => {
     setLevel(lvl);
@@ -85,195 +103,234 @@ const Team = ({ darkMode }) => {
   };
 
   return (
-    <Box sx={{ width: "100%", maxWidth: 900, mx: "auto",}}>
-      {/* Referral Card */}
-      <Paper
+    <Box sx={{ width: "100%", maxWidth: 900, mx: "auto", pb: 6 }}>
+
+<IconButton
+  onClick={() => navigate("/user-dashboard")}
+  sx={{
+    color: "#fff",
+    background: "linear-gradient(135deg, #0080ff, #1565c0)",
+    boxShadow: "0 6px 15px rgba(30,136,229,0.4)",
+    borderRadius: "12px",
+    p: 1.5,
+    transition: "all 0.3s ease",
+    "&:hover": {
+      transform: "scale(1.1)",
+      background: "linear-gradient(135deg, #1565c0, #1e88e5)",
+      boxShadow: "0 8px 20px rgba(30,136,229,0.6)",
+    },
+  }}
+>
+  <ArrowBackIosNewIcon fontSize="medium" />
+</IconButton>
+
+
+   <Paper
+  sx={{
+    p: { xs: 3, sm: 4 }, // smaller padding on mobile
+    borderRadius: { xs: 3, sm: 6 },
+    background: darkMode
+      ? "linear-gradient(135deg, #1f2937, #111827)"
+      : "linear-gradient(90deg, #0573e2, #0573e2)",
+    color: "#fff",
+    display: "flex",
+    flexDirection: "column",
+    gap: { xs: 2, sm: 3 },
+    boxShadow: "0 12px 40px rgba(0,0,0,0.25)",
+    mt: { xs: 2, sm: 3 },
+  }}
+>
+  {/* Title */}
+  <Typography sx={{ fontSize: { xs: 18, sm: 20 }, fontWeight: "bold" }}>
+    Invite & Earn
+  </Typography>
+
+  {/* Policies */}
+  <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 1, sm: 1.5 } }}>
+    <Typography sx={{ display: "flex", alignItems: "center", gap: 1, fontSize: { xs: 12, sm: 14 } }}>
+      <FaCheckCircle size={14} /> Send this link to your friends. When they sign up, you get commission on their deposits.
+    </Typography>
+    <Typography sx={{ display: "flex", alignItems: "center", gap: 1, fontSize: { xs: 12, sm: 14 } }}>
+      <FaCheckCircle size={14} /> Level 1: 12% | Level 2: 5% | Level 3: 1%
+    </Typography>
+    <Typography sx={{ display: "flex", alignItems: "center", gap: 1, fontSize: { xs: 12, sm: 14 } }}>
+      <FaCheckCircle size={14} /> Click COPY, then share on WhatsApp, Telegram, etc.
+    </Typography>
+  </Box>
+
+  {/* Referral Link */}
+  <Box
+    sx={{
+      background: darkMode ? "rgba(255,255,255,0.05)" : "rgba(32, 103, 127, 0.5)",
+      p: { xs: 1.5, sm: 2 },
+      borderRadius: { xs: 2, sm: 3 },
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      mt: { xs: 2, sm: 3 },
+    }}
+  >
+    <Typography
+      sx={{
+        wordBreak: "break-all",
+        flex: 1,
+        pr: { xs: 1, sm: 2 },
+        fontSize: { xs: 12, sm: 14 },
+        color: darkMode ? "#fff" : "#ffffff",
+      }}
+    >
+      {referralLink}
+    </Typography>
+
+    <Tooltip title="Copy Link">
+      <IconButton
+        onClick={handleCopyReferral}
         sx={{
-          p: 4,
-          borderRadius: 6,
-          background: darkMode
-            ? "linear-gradient(135deg, #1f2937, #111827)"
-            : "linear-gradient(90deg, #3c7ad1, #50b5ff)",
+          width: { xs: 32, sm: 40 },
+          height: { xs: 32, sm: 40 },
+          background: darkMode ? "#309cea" : "#3896d9",
           color: "#fff",
-          display: "flex",
-          flexDirection: "column",
-          gap: 3,
-          boxShadow: "0 12px 40px rgba(0,0,0,0.25)",
+          "&:hover": {
+            transform: "scale(1.1)",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.4)",
+          },
         }}
       >
-        <Typography sx={{ fontSize: 20, fontWeight: "bold" }}>
-          Invite & Earn
-        </Typography>
+        <HiOutlineClipboardDocument size={20} />
+      </IconButton>
+    </Tooltip>
+  </Box>
 
-        {/* Policies */}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <FaCheckCircle size={14} /> Send this link to your friends. When they
-            sign up, you get commission on their deposits.
-          </Typography>
-          <Typography sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <FaCheckCircle size={14} /> Level 1: 20% | Level 2: 3% | Level 3: 1%
-          </Typography>
-          <Typography sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <FaCheckCircle size={14} /> Click COPY, then share on WhatsApp,
-            Telegram, etc.
-          </Typography>
-        </Box>
+  {/* Social Buttons */}
+  <Box sx={{ display: "flex", gap: { xs: 1, sm: 2 }, mt: { xs: 1, sm: 2 } }}>
+    <Tooltip title="Share on WhatsApp">
+      <IconButton
+        onClick={shareWhatsApp}
+        sx={{
+          width: { xs: 36, sm: 44 },
+          height: { xs: 36, sm: 44 },
+          background: "#25D366",
+          color: "#fff",
+          "&:hover": { transform: "scale(1.1)" },
+        }}
+      >
+        <FaWhatsapp size={18} />
+      </IconButton>
+    </Tooltip>
 
-        <Box
+    <Tooltip title="Share on Telegram">
+      <IconButton
+        onClick={shareTelegram}
+        sx={{
+          width: { xs: 36, sm: 44 },
+          height: { xs: 36, sm: 44 },
+          background: "#148fcc",
+          color: "#fff",
+          "&:hover": { transform: "scale(1.1)" },
+        }}
+      >
+        <FaTelegramPlane size={18} />
+      </IconButton>
+    </Tooltip>
+  </Box>
+</Paper>
+
+      {/* Stats */}
+      <Box display="flex" gap={3} mt={4} mb={3}>
+        <Paper
           sx={{
-            background: darkMode ? "rgba(255,255,255,0.05)" : "rgba(32, 103, 127, 0.5)",
-            p: 2,
-            borderRadius: 3,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
+            flex: 1,
+            p: 4,
+            textAlign: "center",
+            borderRadius: 4,
+            background: darkMode ? "#1f2937" : "#fdfdfd",
+            boxShadow: darkMode
+              ? "0 6px 20px rgba(0,0,0,0.4)"
+              : "0 6px 20px rgba(0,0,0,0.08)",
+            transition: "all 0.3s",
+            "&:hover": {
+              transform: "translateY(-3px)",
+              boxShadow: darkMode
+                ? "0 10px 25px rgba(0,0,0,0.5)"
+                : "0 10px 25px rgba(0,0,0,0.12)",
+            },
           }}
         >
           <Typography
+            variant="h4"
+            fontWeight="bold"
+            color={darkMode ? "#fff" : "#111"}
+          >
+            {commission}
+          </Typography>
+          <Typography color={darkMode ? "#aaa" : "#555"}>Commission</Typography>
+        </Paper>
+
+        <Paper
+          sx={{
+            flex: 1,
+            p: 4,
+            textAlign: "center",
+            borderRadius: 4,
+            background: darkMode ? "#1f2937" : "#fdfdfd",
+            boxShadow: darkMode
+              ? "0 6px 20px rgba(0,0,0,0.4)"
+              : "0 6px 20px rgba(0,0,0,0.08)",
+            transition: "all 0.3s",
+            "&:hover": {
+              transform: "translateY(-3px)",
+              boxShadow: darkMode
+                ? "0 10px 25px rgba(0,0,0,0.5)"
+                : "0 10px 25px rgba(0,0,0,0.12)",
+            },
+          }}
+        >
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            color={darkMode ? "#fff" : "#111"}
+          >
+            {team.length}
+          </Typography>
+          <Typography color={darkMode ? "#aaa" : "#555"}>Team Size</Typography>
+        </Paper>
+      </Box>
+
+      {/* Level Buttons */}
+      <Box sx={{ display: "flex", gap: 2, justifyContent: "center", mt: 3 }}>
+        {[1, 2, 3].map((lvl) => (
+          <Box
+            key={lvl}
+            onClick={() => handleLevelChange(lvl)}
             sx={{
-              wordBreak: "break-all",
               flex: 1,
-              pr: 2,
-              color: darkMode ? "#fff" : "#ffffff",
+              py: 1.3,
+              borderRadius: 2,
+              cursor: "pointer",
+              fontSize: "15px",
+              textAlign: "center",
+              fontFamily: "Poppins, sans-serif",
+              background: level === lvl ? "#1565c0  " : "#ffffff",
+              color: level === lvl ? "#fff" : "#1f1f1f",
+              boxShadow:
+                level === lvl
+                  ? "0 6px 15px rgba(0,0,0,0.25)"
+                  : "0 4px 12px rgba(0,0,0,0.08)",
+              transition: "all 0.3s",
+              "&:hover": {
+                transform: "translateY(-2px)",
+                boxShadow:
+                  level === lvl
+                    ? "0 8px 20px rgba(0,0,0,0.3)"
+                    : "0 6px 18px rgba(0,0,0,0.15)",
+              },
             }}
           >
-            {referralLink}
-          </Typography>
+            Level {lvl}
+          </Box>
+        ))}
+      </Box>
 
-          <Tooltip title="Copy Link">
-            <IconButton
-              onClick={handleCopyReferral}
-              sx={{
-                background: darkMode ? "#309cea" : "#3896d9",
-                color: "#fff",
-                "&:hover": { transform: "scale(1.1)", boxShadow: "0 8px 20px rgba(0,0,0,0.4)" },
-              }}
-            >
-              <HiOutlineClipboardDocument size={22} />
-            </IconButton>
-          </Tooltip>
-        </Box>
-
-        <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
-          <Tooltip title="Share on WhatsApp">
-            <IconButton
-              onClick={shareWhatsApp}
-              sx={{
-                background: "#25D366",
-                color: "#fff",
-                "&:hover": { transform: "scale(1.1)" },
-              }}
-            >
-              <FaWhatsapp />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip title="Share on Telegram">
-            <IconButton
-              onClick={shareTelegram}
-              sx={{
-                background: "#148fcc",
-                color: "#fff",
-                "&:hover": { transform: "scale(1.1)" },
-              }}
-            >
-              <FaTelegramPlane />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      </Paper>
-
-{/* Stats */}
-<Box display="flex" gap={3} mt={4} mb={3}>
-  <Paper
-    sx={{
-      flex: 1,
-      p: 4,
-      textAlign: "center",
-      borderRadius: 4,
-      background: darkMode ? "#1f2937" : "#fdfdfd", // soft white background in light mode
-      boxShadow: darkMode
-        ? "0 6px 20px rgba(0,0,0,0.4)"
-        : "0 6px 20px rgba(0,0,0,0.08)", // soft shadow for modern look
-      transition: "all 0.3s",
-      "&:hover": {
-        transform: "translateY(-3px)",
-        boxShadow: darkMode
-          ? "0 10px 25px rgba(0,0,0,0.5)"
-          : "0 10px 25px rgba(0,0,0,0.12)",
-      },
-    }}
-  >
-    <Typography variant="h4" fontWeight="bold" color={darkMode ? "#fff" : "#111"}>
-      {commission}
-    </Typography>
-    <Typography color={darkMode ? "#aaa" : "#555"}>Commission</Typography>
-  </Paper>
-
-  <Paper
-    sx={{
-      flex: 1,
-      p: 4,
-      textAlign: "center",
-      borderRadius: 4,
-      background: darkMode ? "#1f2937" : "#fdfdfd",
-      boxShadow: darkMode
-        ? "0 6px 20px rgba(0,0,0,0.4)"
-        : "0 6px 20px rgba(0,0,0,0.08)",
-      transition: "all 0.3s",
-      "&:hover": {
-        transform: "translateY(-3px)",
-        boxShadow: darkMode
-          ? "0 10px 25px rgba(0,0,0,0.5)"
-          : "0 10px 25px rgba(0,0,0,0.12)",
-      },
-    }}
-  >
-    <Typography variant="h4" fontWeight="bold" color={darkMode ? "#fff" : "#111"}>
-      {team.length}
-    </Typography>
-    <Typography color={darkMode ? "#aaa" : "#555"}>Team Size</Typography>
-  </Paper>
-</Box>
-
-    {/* Level Buttons */}
-<Box sx={{ display: "flex", gap: 2, justifyContent: "center", mt: 3 }}>
-  {[1, 2, 3].map((lvl) => (
-    <Box
-      key={lvl}
-      onClick={() => handleLevelChange(lvl)}
-      sx={{
-        flex: 1,
-        py: 1.3,
-        borderRadius: 2,
-        cursor: "pointer",
-        fontSize: '15px',
-        textAlign: "center",
-        fontFamily: "Poppins, sans-serif",
-        background:
-          level === lvl
-            ? "#50b5ff" // active blue
-            : "#ffffff", // default white
-        color: level === lvl ? "#fff" : "#1f1f1f",
-        boxShadow:
-          level === lvl
-            ? "0 6px 15px rgba(0,0,0,0.25)"
-            : "0 4px 12px rgba(0,0,0,0.08)",
-        transition: "all 0.3s",
-        "&:hover": {
-          transform: "translateY(-2px)",
-          boxShadow:
-            level === lvl
-              ? "0 8px 20px rgba(0,0,0,0.3)"
-              : "0 6px 18px rgba(0,0,0,0.15)",
-        },
-      }}
-    >
-      Level {lvl}
-    </Box>
-  ))}
-</Box>
       {/* Team List */}
       <Paper
         sx={{

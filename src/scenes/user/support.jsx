@@ -1,12 +1,15 @@
 import React from "react";
-import { Box, Typography, Button, Paper } from "@mui/material";
+import { Box, Typography, Button, Paper, IconButton } from "@mui/material";
 import TelegramIcon from "@mui/icons-material/Telegram";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const Support = () => {
+  const navigate = useNavigate();
   const telegramLink = "https://t.me/your_telegram";
-  const whatsappLink = "https://wa.me/923711580024"; // Updated number
+  const whatsappLink = "https://wa.me/923711580024";
 
   return (
     <Box
@@ -14,10 +17,28 @@ const Support = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
-        py: 5,
       }}
     >
+      {/* Top Back Arrow */}
+      <Box sx={{ width: "100%", maxWidth: 1100,}}>
+<IconButton
+  onClick={() => navigate("/user-dashboard")}
+  sx={{
+    color: "#fff",
+    background: "linear-gradient(135deg, #1e88e5, #1565c0)",
+    borderRadius: "12px",
+    p: 1.5,
+    transition: "all 0.3s ease",
+    "&:hover": {
+      transform: "scale(1.1)",
+      background: "linear-gradient(135deg, #1565c0, #1e88e5)",
+    },
+  }}
+>
+  <ArrowBackIosNewIcon fontSize="medium" />
+</IconButton>
+      </Box>
+
       {/* Top Support Image with fade-in motion */}
       <motion.div
         initial={{ opacity: 0, y: -30 }}
@@ -71,7 +92,7 @@ const Support = () => {
             Facing issues? Our team is available 24/7 to assist you. Choose your preferred platform below.
           </Typography>
 
-          {/* WhatsApp Button with hover scale animation */}
+          {/* WhatsApp Button */}
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
             <Button
               fullWidth
@@ -87,7 +108,6 @@ const Support = () => {
                 borderRadius: 2,
                 mb: 2,
                 boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-                transition: "all 0.3s ease",
                 "&:hover": {
                   background: "linear-gradient(90deg, #1ebe5d, #0f7865)",
                   transform: "translateY(-2px) scale(1.03)",
@@ -99,7 +119,7 @@ const Support = () => {
             </Button>
           </motion.div>
 
-          {/* Telegram Button with hover scale animation */}
+          {/* Telegram Button */}
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
             <Button
               fullWidth
@@ -114,7 +134,6 @@ const Support = () => {
                 textTransform: "none",
                 borderRadius: 2,
                 boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-                transition: "all 0.3s ease",
                 "&:hover": {
                   background: "linear-gradient(90deg, #007ab8, #00bfff)",
                   transform: "translateY(-2px) scale(1.03)",

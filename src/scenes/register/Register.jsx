@@ -1,5 +1,5 @@
 // src/scenes/auth/Register.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   TextField,
@@ -12,7 +12,7 @@ import {
   InputAdornment,
   Slide,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PersonIcon from "@mui/icons-material/Person";
@@ -33,6 +33,7 @@ const generateReferralCode = () =>
 
 const Register = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -47,6 +48,13 @@ const Register = () => {
   const [successSnackbar, setSuccessSnackbar] = useState(false);
   const [errorSnackbar, setErrorSnackbar] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Prefill referral code from URL query ?ref=
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const ref = queryParams.get("ref") || "";
+    setReferralCode(ref);
+  }, [location.search]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -108,7 +116,6 @@ const Register = () => {
       fontWeight: 500,
       fontSize: 19,
       mt: -1.4,
-
     },
     "& .MuiInputLabel-root.Mui-focused": {
       color: "#309cea",
@@ -330,7 +337,6 @@ const Register = () => {
       </Box>
 
       {/* Snackbars */}
-      {/* ERROR SNACKBAR */}
       <Snackbar
         open={errorSnackbar}
         autoHideDuration={2500}
@@ -364,7 +370,6 @@ const Register = () => {
         </Alert>
       </Snackbar>
 
-      {/* SUCCESS SNACKBAR */}
       <Snackbar
         open={successSnackbar}
         autoHideDuration={2000}

@@ -7,11 +7,13 @@ import {
   IconButton,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { ArrowBackIosNew as ArrowBackIosNewIcon } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const FAQ = ({ darkMode }) => {
   const isDark = darkMode;
-
+  const navigate = useNavigate();
   const faqs = [
     {
       question: "How do I deposit funds?",
@@ -46,10 +48,26 @@ const FAQ = ({ darkMode }) => {
         width: "100%",
         maxWidth: 900,
         mx: "auto",
-        mt: 4,
-        px: 2,
       }}
     >
+      <IconButton
+  onClick={() => navigate("/user-dashboard")}
+  sx={{
+    color: "#fff",
+    background: "linear-gradient(135deg, #1e88e5, #1565c0)",
+    boxShadow: "0 6px 15px rgba(30,136,229,0.4)",
+    borderRadius: "12px",
+    p: 1.5,
+    transition: "all 0.3s ease",
+    "&:hover": {
+      transform: "scale(1.1)",
+      background: "linear-gradient(135deg, #1565c0, #1e88e5)",
+      boxShadow: "0 8px 20px rgba(30,136,229,0.6)",
+    },
+  }}
+>
+  <ArrowBackIosNewIcon fontSize="medium" />
+</IconButton>
       {/* Title */}
       <Typography
         variant="h4"

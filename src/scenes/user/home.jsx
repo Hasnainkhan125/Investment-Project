@@ -23,7 +23,6 @@
   import { useNavigate } from "react-router-dom";
   import { supabase } from "../../supabaseClient";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import ImageCarousel from "../user/ImageCarousel"; // adjust path as needed
 import { motion } from "framer-motion";
 
   import { HiOutlineUser } from "react-icons/hi2";
@@ -165,6 +164,40 @@ const fadeUp = {
   </style>
 </Box>
         </Box>
+
+
+{/* Announcement Section */}
+  <Box
+    sx={{
+      mt: -3,
+      mb: 2,
+      borderRadius: 5,
+      overflow: "hidden",
+    }}
+  >
+    <Box
+      sx={{
+        width: "100%",
+        py: 1.5,
+        fontSize: 17,
+        px: 2,
+        whiteSpace: "nowrap",
+        display: "inline-block",
+        animation: "marquee 10s linear infinite",
+      }}
+    >
+      🎉 Welcome to InvestPro — Pakistan's #1 Trusted Investment Platform Secure • Fast • Reliable Withdrawals
+  </Box>
+
+    <style>
+      {`
+        @keyframes marquee {
+          0% { transform: translateX(100%); }
+          100% { transform: translateX(-100%); }
+        }
+      `}
+    </style>
+  </Box>
 
 
 <motion.div
@@ -319,181 +352,80 @@ const fadeUp = {
 </Paper>
 </motion.div>
 
-
-{/* Announcement Section */}
-  <Box
-    sx={{
-      mt: -2, // slightly closer to balance card
-      borderRadius: 5,
-      overflow: "hidden",
-      background: darkMode
-        ? "linear-gradient(135deg, #0f172a, #1e293b)"
-        : "linear-gradient(135deg, #ffffff, #ffffff)",
-    }}
-  >
-    <Box
-      sx={{
-        width: "100%",
-        py: 1.5,
-        fontSize: 17,
-        px: 2,
-        color: darkMode ? "#fff" : "#0f172a", 
-        whiteSpace: "nowrap",
-        display: "inline-block",
-        animation: "marquee 10s linear infinite",
-      }}
-    >
-      🎉 Welcome to InvestPro — Pakistan's #1 Trusted Investment Platform Secure • Fast • Reliable Withdrawals
-  </Box>
-
-    <style>
-      {`
-        @keyframes marquee {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
-        }
-      `}
-    </style>
-  </Box>
-<ImageCarousel darkMode={darkMode} />
-
-
-  <Grid container spacing={2} >
-    {[ /* your wallet cards */ ].map((item, index) => (
-      <Grid item xs={6} key={index}>
-      </Grid>
-    ))}
-  </Grid>
-
 <motion.div
   variants={fadeUp}
   initial="hidden"
   whileInView="visible"
   viewport={{ once: true, amount: 0.2 }}
 >
-  
-<Grid container spacing={2} >
-  {[
-    {
-      title: "Deposit",
-      icon: <HiOutlineBanknotes size={26} />,
-      color: "#2563eb",
-      path: "/user-dashboard/deposit",
-    },
-    {
-      title: "Withdraw",
-      icon: <HiOutlineBanknotes size={26} />,
-      color: "#ef4444",
-      path: "/user-dashboard/withdraw",
-    },
-    {
-      title: "Plans",
-      icon: <HiOutlineCube size={26} />,
-      color: "#f59e0b",
-      path: "/user-dashboard/plan",
-    },
-    {
-      title: "My Tasks",
-      icon: <HiOutlineChartBar size={26} />,
-      color: "#3b82f6",
-      path: "/user-dashboard/tasks",
-    },
-    {
-      title: "My Team",
-      icon: <HiOutlineUserGroup size={26} />,
-      color: "#22c55e",
-      path: "/user-dashboard/team",
-    },
-    {
-      title: "History",
-      icon: <HiOutlineChartBar size={26} />,
-      color: "#6366f1",
-      path: "/user-dashboard/deposit-history",
-    },
-    {
-      title: "Support",
-      icon: <HiOutlineUser size={26} />,
-      color: "#0ea5e9",
-      path: "/user-dashboard/support",
-    },
-    {
-      title: "Profile",
-      icon: <HiUser size={26} />,
-      color: "#8b5cf6",
-      path: "/user-dashboard/profile",
-    },
-  ].map((card, index) => (
-    <Grid item xs={6} sm={6} md={3} key={index}>
-      <Paper
-        elevation={0}
-        onClick={() => navigate(card.path)}
-        sx={{
-          p: 3.5,
-          borderRadius: 5,
-          textAlign: "center",
-          cursor: "pointer",
-          position: "relative",
-          background: darkMode
-            ? "linear-gradient(145deg, #1e293b, #0f172a)"
-            : "#ffffff",
-          border: darkMode
-            ? "1px solid rgba(255,255,255,0.06)"
-            : "1px solid rgba(0,0,0,0.05)",
-          boxShadow: darkMode
-            ? "0 8px 20px rgba(0,0,0,0.4)"
-            : "0 8px 20px rgba(0,0,0,0.06)",
-          transition: "all 0.35s cubic-bezier(.4,0,.2,1)",
-
-          "&:hover": {
-            transform: "translateY(-6px)",
-            boxShadow: `0 20px 40px ${card.color}30`,
-            borderColor: `${card.color}40`,
-          },
-
-          "&:active": {
-            transform: "scale(0.97)",
-          },
-        }}
-      >
-        {/* Icon Container */}
-        <Box
+  <Grid container spacing={{ xs: 2, sm: 2, md: 3 }}>
+    {[
+      { title: "Deposit", icon: <HiOutlineBanknotes />, color: "#2563eb", path: "/user-dashboard/deposit" },
+      { title: "Withdraw", icon: <HiOutlineBanknotes />, color: "#ef4444", path: "/user-dashboard/withdraw" },
+      { title: "Plans", icon: <HiOutlineCube />, color: "#f59e0b", path: "/user-dashboard/plan" },
+      { title: "My Tasks", icon: <HiOutlineChartBar />, color: "#3b82f6", path: "/user-dashboard/tasks" },
+      { title: "My Team", icon: <HiOutlineUserGroup />, color: "#22c55e", path: "/user-dashboard/team" },
+      { title: "History", icon: <HiOutlineChartBar />, color: "#6366f1", path: "/user-dashboard/deposit-history" },
+      { title: "Support", icon: <HiOutlineUser />, color: "#0ea5e9", path: "/user-dashboard/support" },
+      { title: "Profile", icon: <HiUser />, color: "#8b5cf6", path: "/user-dashboard/profile" },
+    ].map((card, index) => (
+      <Grid item xs={6} sm={4} md={3} key={index}>
+        <Paper
+          elevation={0}
+          onClick={() => navigate(card.path)}
           sx={{
-            width: 75,
-            height: 75,
-            borderRadius: "18px",
-            mx: "auto",
-            mb: 2,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: `${card.color}15`,
-            color: card.color,
-            transition: "all 0.3s ease",
-
+            p: { xs: 2.5, sm: 3.5 },
+            borderRadius: 4,
+            textAlign: "center",
+            cursor: "pointer",
+            position: "relative",
+            background: darkMode ? "linear-gradient(145deg, #1e293b, #0f172a)" : "#ffffff",
+            border: darkMode ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.05)",
+            boxShadow: darkMode ? "0 8px 20px rgba(0,0,0,0.4)" : "0 8px 20px rgba(0,0,0,0.06)",
+            transition: "all 0.35s cubic-bezier(.4,0,.2,1)",
             "&:hover": {
-              background: `${card.color}25`,
-              transform: "scale(1.1)",
+              transform: "translateY(-6px)",
+              boxShadow: `0 20px 40px ${card.color}30`,
+              borderColor: `${card.color}40`,
             },
+            "&:active": { transform: "scale(0.97)" },
           }}
         >
-          {card.icon}
-        </Box>
+          {/* Icon Container */}
+          <Box
+            sx={{
+              width: { xs: 60, sm: 75 },
+              height: { xs: 60, sm: 75 },
+              borderRadius: "18px",
+              mx: "auto",
+              mb: 2,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: `${card.color}15`,
+              color: card.color,
+              transition: "all 0.3s ease",
+              "&:hover": { background: `${card.color}25`, transform: "scale(1.1)" },
+            }}
+          >
+            {React.cloneElement(card.icon, { size: { xs: 20, sm: 26 } })}
+          </Box>
 
-        {/* Title */}
-        <Typography
-          sx={{
-            fontWeight: 600,
-            fontSize: 15,
-            color: colors.textPrimary,
-            letterSpacing: 0.4,
-          }}
-        >
-          {card.title}
-        </Typography>
-      </Paper>
-    </Grid>
-  ))}
-</Grid>
+          {/* Title */}
+          <Typography
+            sx={{
+              fontWeight: 600,
+              fontSize: { xs: 13, sm: 15 },
+              color: colors.textPrimary,
+              letterSpacing: 0.4,
+            }}
+          >
+            {card.title}
+          </Typography>
+        </Paper>
+      </Grid>
+    ))}
+  </Grid>
 </motion.div>
         {/* Snackbar */}
         <Snackbar open={snackbarOpen} autoHideDuration={2000} onClose={() => setSnackbarOpen(false)} anchorOrigin={{ vertical: "top", horizontal: "center" }} TransitionComponent={(props) => <Slide {...props} direction="down" />} sx={{ pointerEvents: "none" }}>

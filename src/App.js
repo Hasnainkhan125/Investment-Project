@@ -18,8 +18,7 @@ import Team from "./scenes/user/team.jsx";
 import TaskList from "./scenes/user/task.jsx";
 import DepositHistory from "./scenes/user/deposithistory.jsx";
 import Support from "./scenes/user/support.jsx";
-
-// 🔹 Auth
+import AdminDashboard from "./scenes/user/adminpage.jsx";// 🔹 Auth
 import Login from "./scenes/login/Login";
 import Register from "./scenes/register/Register";
 import ChoosePanel from "./components/ChoosePanel";
@@ -111,20 +110,20 @@ function App() {
         >
           <Routes>
             {/* Default */}
-            <Route
-              path="/"
-              element={
-                session ? <Navigate to="/user-dashboard" replace /> : <Navigate to="/login" replace />
-              }
-            />
+<Route
+  path="/"
+  element={
+    session ? <Navigate to="/user-dashboard" replace /> : <Navigate to="/register" replace />
+  }
+/>
 
-            {/* Auth */}
-            <Route
-              path="/login"
-              element={session ? <Navigate to="/user-dashboard" replace /> : <Login />}
-            />
-            <Route path="/register" element={<Register />} />
-            <Route path="/choose-panel" element={<ChoosePanel />} />
+{/* Auth */}
+<Route
+  path="/login"
+  element={session ? <Navigate to="/user-dashboard" replace /> : <Login />}
+/>
+<Route path="/register" element={<Register />} />
+<Route path="/choose-panel" element={<ChoosePanel />} />
 
             {/* ================= USER DASHBOARD ================= */}
             <Route
@@ -135,6 +134,7 @@ function App() {
                 </ProtectedRoute>
               }
             >
+              
               <Route index element={<Home />} />
               <Route path="plan" element={<Plan />} />
               <Route path="deposit" element={<Deposit />} />
@@ -144,7 +144,16 @@ function App() {
               <Route path="faq" element={<FAQPage />} />
               <Route path="deposit-history" element={<DepositHistory />} />
               <Route path="support" element={<Support />} />
-
+// Inside <Route path="/user-dashboard/*">
+<Route
+  index
+  element={
+    session?.user?.email === "admin@gmail.com" && localStorage.getItem("isAdmin")
+      ? <AdminDashboard />
+      : <Home />
+  }
+/>
+</Route>
               {/* ✅ TaskList Route */}
               <Route
                 path="tasks"

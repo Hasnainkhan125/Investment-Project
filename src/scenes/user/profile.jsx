@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
-  Avatar,
   TextField,
   Button,
   Grid,
@@ -14,11 +13,9 @@ import {
   Slide,
   Alert,
   CircularProgress,
-  Tooltip,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom"; // <-- import this at top
 
-import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import LockIcon from "@mui/icons-material/Lock";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
@@ -258,7 +255,7 @@ const Profile = ({ darkMode }) => {
 >
   {[
     { label: "Change Password", key: "password", icon: <LockIcon /> },
-    { label: "Deposit Record", key: "deposit", icon: <ReceiptLongIcon /> },
+    { label: "History Record", key: "deposit", icon: <ReceiptLongIcon /> },
     { label: "Help & FAQ", key: "faq", icon: <HelpOutlineIcon /> },
   ].map((item, index, arr) => (
     <Box
